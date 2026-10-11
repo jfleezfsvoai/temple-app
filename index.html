@@ -384,6 +384,12 @@ td.long{white-space:normal;min-width:260px}
   .hero{padding:18px}
   .hero h2{font-size:21px}
 }
+.htop{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;align-items:stretch}
+.todo{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:0 28px;margin-top:6px}
+.trow{display:flex;gap:10px;align-items:center;padding:10px 0;border-top:1px solid var(--line);min-width:0}
+.trow .small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.trow .tag{flex:none}
+@media (max-width:1000px){.htop{grid-template-columns:minmax(0,1fr)}}
 </style>
 
 </head>
@@ -831,36 +837,40 @@ function ticketCard(a){
  return `<div class="ticket"><div class="small">${a.q.altar} · ${esc(a.q.deity)} · ${esc(S.topic)}</div><div class="no">${a.t.no}</div>
   <dl><div><dt>前面还有</dt><dd>${a.ahead} 位</dd></div><div><dt>预计等候</dt><dd>约 ${a.eta} 分钟</dd></div></dl></div>`;
 }
+function evMini(e){const p=dparts(e.date);const cls={办事:'mute',宝诞:'gold',拜有应公:'yin',初一十五:'good'}[e.type]||'mute';
+ return `<div class="ev"><div class="d"><b>${p.d}</b><span>${p.m}月 周${p.w}</span></div><div class="grow"><b>${esc(e.title)}</b><div class="small muted">${esc(e.time)} · 农历${esc(e.lunar)}</div></div><span class="pill ${cls}">${esc(e.type)}</span></div>`}
 function dHome(){
  const c=crowd(),a=myAhead(),d=dv();
  const h=new Date().getHours(),greet=h<11?'早安':h<18?'午安':'晚上好';
- const up=S.events.filter(e=>e.date>=TODAY).sort((x,y)=>x.date.localeCompare(y.date)).slice(0,4);
+ const up=S.events.filter(e=>e.date>=TODAY).sort((x,y)=>x.date.localeCompare(y.date)).slice(0,3);
  const myOrders=S.orders.filter(o=>o.did===d.id||(!o.did&&o.who===d.name)),openO=myOrders.filter(o=>!['已送达','已完成'].includes(o.status));
  const myJobs=S.jobs.filter(j=>j.dev===d.name&&j.status!=='已完成'),appts=S.slots.filter(s=>d.appts.includes(s.id)&&s.date>=TODAY);
  const next=REWARDS.find(r=>r[0]>d.credit),pct=next?Math.min(100,Math.round(d.credit/next[0]*100)):100,canRedeem=REWARDS.filter(r=>r[0]<=d.credit).length;
  const svc=x=>{const n=x.k==='ask'?null:S.products.filter(p=>p.active&&p.cat===x.k).length;
   return `<button data-act="${x.k==='ask'?'dtab':'cat'}" data-v="${x.k}"><span class="qi ${x.p?'g':''}"><svg viewBox="0 0 24 24" aria-hidden="true">${x.k==='ask'?ICON.ask:PICON[x.k]}</svg></span><span class="grow"><b>${x.n}</b><p>${x.d}</p><span class="tag ${x.p?'t-gold':'t-info'}">${x.by}</span>${n!=null?` <span class="tag">${n} 项</span>`:''}</span></button>`};
+ const todo=[
+  ...myJobs.map(j=>`<div class="trow"><span class="tag t-info">服务</span><div class="grow"><b>${esc(j.svc)}</b><div class="small muted">${jobWhen(j)}${jobTeam(j).length?' · '+jobTeam(j).map(uname).map(esc).join('、'):' · 庙方正在安排人手'}</div></div><span class="pill ${j.status==='待派工'?'warn':'info'}">${j.status==='待派工'?'安排中':'已排期'}</span></div>`),
+  ...appts.map(s=>`<div class="trow"><span class="tag t-gold">预约</span><div class="grow"><b>特别预约 · ${esc(s.deity)}</b><div class="small muted">${dshort(s.date)} ${s.time}</div></div><span class="pill good">已预约</span></div>`),
+  ...openO.map(o=>`<div class="trow"><span class="tag">订单</span><div class="grow"><b>${o.id} · ${rm(o.total)}</b><div class="small muted">${esc(o.items)}</div></div><span class="pill warn">${o.status}</span></div>`),
+ ];
  return `
  ${a&&a.status==='waiting'&&a.eta<=15?`<div class="alert" role="alert"><div><b>快轮到你了</b><br>${a.t.no} 大约 ${a.eta} 分钟后办理，请现在回到${a.q.altar}。</div></div>`:''}
  <div class="hero"><div><div class="label">${dshort(TODAY)}</div><h2>${greet}，${esc(d.name)}</h2><p>今天两坛共 ${c.n} 人等候，人潮${c.t}</p></div>
-  <div class="hstats"><div><b>${num(helpedTotal())}</b><span>本庙至今帮助香客（人次）</span></div><div><b>${d.asks.length}</b><span>我来问事（次）</span></div><div><b>${openO.length+myJobs.length+appts.length}</b><span>我进行中的事项</span></div></div></div>
- <div class="hgrid">
+  <div class="hstats"><div><b>${num(helpedTotal())}</b><span>本庙至今帮助香客（人次）</span></div><div><b>${d.asks.length}</b><span>我来问事（次）</span></div><div><b>${todo.length}</b><span>我进行中的事项</span></div></div></div>
+ <div class="htop">
   <div class="mcard"><div class="row"><div class="grow"><div class="mname">我的功德</div><div class="small sub">会员编号 ${d.id}</div></div><span class="mseal" aria-hidden="true">福</span></div>
    <div class="mstats"><div><div class="small sub">功德分（累计）</div><div class="pts">${num(d.points)}</div></div><div><div class="small sub">可用积分</div><div class="pts">${num(d.credit)}</div></div></div>
    <div><div class="bar"><i style="width:${pct}%"></i></div><div class="small sub" style="margin-top:6px">${next?'再 '+num(next[0]-d.credit)+' 积分可换「'+next[1]+'」':'所有法宝都可以兑换'}</div></div>
    <button class="btn sm" data-act="dtab" data-v="me">${canRedeem?'现在可以换 '+canRedeem+' 样法宝':'看可以换什么'}</button></div>
   <div class="card"><div class="row" style="margin-bottom:10px"><h3 class="grow" style="margin:0">今日问事</h3><span class="pill ${c.c}">人潮${c.t}</span></div>
    ${a&&a.status!=='done'?`<div class="tstrip"><span>我的号码</span><b>${a.t.no}</b><span class="grow">${a.status==='serving'?'轮到你了，请到'+a.q.altar:'前面 '+a.ahead+' 位，约 '+a.eta+' 分钟'}</span><button class="btn sm" data-act="dtab" data-v="ask">查看</button></div>`:''}
-   ${['A','B'].map(k=>{const q=S.queues[k],w=waiting(k).length,sv=serving(k);return `<div class="altar"><span class="realm ${q.realm}">${q.altar}</span><div class="grow"><b>${esc(q.deity)}</b><div class="small muted">等候 ${w} 人 · 约 ${w*q.avg} 分钟</div></div><div class="right"><div class="label">正在办理</div><div class="now">${sv?sv.no:'—'}</div></div>${!a||a.status==='done'?`<button class="btn sm pri" data-act="take" data-v="${k}">拿号</button>`:''}</div>`}).join('')}
+   ${['A','B'].map(k=>{const q=S.queues[k],w=waiting(k).length,sv=serving(k);return `<div class="altar"><div class="grow"><div class="row" style="gap:6px"><span class="realm ${q.realm}">${q.altar}</span><b>${esc(q.deity)}</b></div><div class="small muted" style="margin-top:2px">办理中 ${sv?sv.no:'—'} · 等候 ${w} 人 · 约 ${w*q.avg} 分钟</div></div>${!a||a.status==='done'?`<button class="btn sm pri" data-act="take" data-v="${k}">拿号</button>`:''}</div>`}).join('')}
    <div class="row" style="margin-top:10px"><button class="linkbtn" data-act="asktab" data-v="appt">特别预约（名额有限）</button></div></div>
+  <div class="card"><div class="row" style="margin-bottom:10px"><h3 class="grow" style="margin:0">接下来的活动</h3><button class="linkbtn" data-act="dtab" data-v="cal">全部</button></div><div class="stack">${up.map(evMini).join('')||'<p class="muted">暂时没有公布的活动。</p>'}</div></div>
  </div>
+ <div class="card"><div class="row"><h3 class="grow" style="margin:0">我进行中的事项</h3><button class="linkbtn" data-act="dtab" data-v="me">全部订单与记录</button></div>${todo.length?`<div class="todo">${todo.join('')}</div>`:'<p class="muted" style="margin-top:6px">目前没有进行中的服务、预约或订单。</p>'}</div>
  <div class="sec-h"><h3>服务平台</h3><span class="small muted">本庙和合作伙伴的服务，都在这里办</span></div>
  <div class="svc">${SVC.map(svc).join('')}</div>
- <div class="hgrid3">
-  <div class="card"><h3>我的服务与预约</h3>${myJobs.map(j=>`<div class="item"><div class="grow"><b>${esc(j.svc)}</b><p>${jobWhen(j)}</p><p>${jobTeam(j).length?jobTeam(j).map(uname).map(esc).join('、'):'庙方正在安排人手'}</p></div><span class="pill ${j.status==='待派工'?'warn':'info'}">${j.status==='待派工'?'安排中':'已排期'}</span></div>`).join('')}${appts.map(s=>`<div class="item"><div class="grow"><b>特别预约 · ${esc(s.deity)}</b><p>${dshort(s.date)} ${s.time}</p></div><span class="pill good">已预约</span></div>`).join('')}${myJobs.length+appts.length?'':'<p class="muted">目前没有安排。</p>'}</div>
-  <div class="card"><div class="row" style="margin-bottom:6px"><h3 class="grow" style="margin:0">我的订单</h3><button class="linkbtn" data-act="dtab" data-v="me">全部</button></div>${myOrders.slice(0,3).map(o=>`<div class="item"><div class="grow"><b>${o.id}</b><p>${esc(o.items)}</p></div><div class="right"><div class="price">${rm(o.total)}</div><span class="pill ${o.status==='已送达'||o.status==='已完成'?'good':'warn'}">${o.status}</span></div></div>`).join('')||'<p class="muted">还没有订单。</p>'}</div>
-  <div class="card"><div class="row" style="margin-bottom:8px"><h3 class="grow" style="margin:0">接下来的活动</h3><button class="linkbtn" data-act="dtab" data-v="cal">全部</button></div><div class="stack">${up.map(evRow).join('')||'<p class="muted">暂时没有公布的活动。</p>'}</div></div>
- </div>
  <div class="hgrid">
   <div class="card"><h3>我问过的神明</h3><div class="ptags">${askCount(d).map(([n,c])=>deityTag(n,c)).join('')||'<span class="muted">还没有问事记录。</span>'}</div>${d.asks[0]?`<p class="small muted" style="margin-top:8px">最近一次：${dshort(d.asks[0].d)}，问${esc(d.asks[0].deity)}，${esc(d.asks[0].topic)}</p>`:''}</div>
   <div class="card"><h3>联络本庙</h3><p class="small muted" style="margin-bottom:10px">活动通知、宝诞提醒都在社群里发。</p><div class="row">${waBtn()}<button class="btn grow" data-act="contact">联络负责人</button></div></div>
