@@ -320,7 +320,7 @@ tfoot td{font-weight:600;background:var(--surface2)}
 @media (max-width:860px){
   .dnav{display:none}
   .cols{grid-template-columns:minmax(0,1fr)}
-  .tabbar{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;left:0;right:0;bottom:0;z-index:25;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
+  .tabbar{display:grid;grid-template-columns:repeat(4,1fr);position:fixed;left:0;right:0;bottom:0;z-index:25;background:var(--surface);border-top:1px solid var(--line);padding-bottom:env(safe-area-inset-bottom,0px)}
   .tabbar button{border:0;background:transparent;padding:8px 2px 9px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11.5px;color:var(--ink3)}
   .tabbar button[aria-current="true"]{color:var(--accent);font-weight:600}
   .tabbar svg{width:22px;height:22px;fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
@@ -390,6 +390,31 @@ td.long{white-space:normal;min-width:260px}
 .trow .small{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .trow .tag{flex:none}
 @media (max-width:1000px){.htop{grid-template-columns:minmax(0,1fr)}}
+/* —— 第七版：拿号放首页、活动页 —— */
+.htop{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr) minmax(0,1fr)}
+.tbig{background:var(--accent-soft);border-radius:14px;padding:14px 16px;display:flex;gap:10px 18px;align-items:center;flex-wrap:wrap}
+.tbig .no{font-size:44px;font-weight:600;color:var(--accent);line-height:1.1}
+.tbig dl{display:flex;gap:22px;margin-left:auto}
+.tbig dt{font-size:11.5px;color:var(--ink3)} .tbig dd{font-weight:600;font-size:16px}
+.evgrid{display:grid;grid-template-columns:minmax(0,5fr) minmax(0,7fr);gap:16px;align-items:start}
+.evc{display:flex;gap:12px;align-items:flex-start;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px;width:100%}
+.evc:hover{border-color:var(--accent)}
+.evc[aria-pressed="true"]{border-color:var(--accent);background:var(--accent-soft)}
+.evc .d{flex:none;width:50px;text-align:center;border-radius:11px;background:var(--surface);border:1px solid var(--line);display:block}
+.evc .d b{display:block;font-size:18px;line-height:1.5}
+.evc .d span{display:block;font-size:10.5px;color:var(--ink3);padding-bottom:4px}
+.evc .grow{display:flex;flex-direction:column;gap:4px}
+.tl{display:grid;grid-template-columns:64px minmax(0,1fr);gap:10px;padding:9px 0;border-top:1px solid var(--line)}
+.tl b{color:var(--accent)}
+.frow{display:flex;gap:10px;align-items:center;padding:11px 0;border-top:1px solid var(--line);flex-wrap:wrap}
+.frow select{padding:5px 8px}
+.frow .price{font-weight:600;white-space:nowrap}
+.amts{display:flex;gap:6px;flex-wrap:wrap}
+.hero.slim{padding:18px 24px}
+.dlg textarea{font-family:inherit;font-size:13px;min-height:84px;width:100%}
+@media (max-width:1000px){.htop{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:860px){.evgrid{grid-template-columns:minmax(0,1fr)} .tbig dl{margin-left:0}}
+.htop .mcard{justify-content:space-between}
 </style>
 
 </head>
@@ -426,7 +451,7 @@ const NAV=[
 const P=(...k)=>Object.fromEntries(PERMS.map(([id])=>[id,k.includes(id)||k.includes('*')]));
 
 const S={
- view:'login', auth:null, loginTab:'dev', regSelf:false, sureKey:null, demo:true, deities:[{name:'济公活佛',realm:'t'},{name:'玄天上帝',realm:'t'},{name:'关圣帝君',realm:'t'},{name:'观音菩萨',realm:'t'},{name:'五殿二爷',realm:'y'},{name:'十殿大爷',realm:'y'}], asklog:[], dlg:null, statP:'month', devDeity:'', cfg:{name:'本庙',sub:'天神坛 · 阴神坛',wa:''}, helpBase:18240, helped:{}, tx:[], seq:{order:1042,job:36,dev:8,rcpt:412,pv:118}, dTab:'home', aTab:'dash', askTab:'walk', cat:'all', shopQ:'', shopTag:'全部', shopSort:'默认', theme:'light', jobEdit:null, newPhoto:null, jobs:[], notifs:[], ledger:'offer', uid:null, meId:null,
+ view:'login', auth:null, loginTab:'dev', regSelf:false, sureKey:null, demo:true, deities:[{name:'济公活佛',realm:'t'},{name:'玄天上帝',realm:'t'},{name:'关圣帝君',realm:'t'},{name:'观音菩萨',realm:'t'},{name:'五殿二爷',realm:'y'},{name:'十殿大爷',realm:'y'}], asklog:[], dlg:null, statP:'month', devDeity:'', cfg:{name:'本庙',sub:'天神坛 · 阴神坛',wa:'',pay:'到庙里柜台付现金，或转账后把收据发给财政。'}, pledges:[], helpBase:18240, helped:{}, tx:[], seq:{order:1042,job:36,dev:8,rcpt:412,pv:118,pl:0,ev:10}, dTab:'home', aTab:'dash', askTab:'walk', cat:'all', shopQ:'', shopTag:'全部', shopSort:'默认', theme:'light', jobEdit:null, newPhoto:null, jobs:[], notifs:[], ledger:'offer', uid:null, meId:null,
  cart:{}, ck:{mode:'pickup',zone:'B',pay:'DuitNow QR'}, topic:'家宅平安',
  reserve:30, devQ:'', arcQ:'', arcYear:'全部', arcType:'全部', meeting:'M3', evForm:false, regForm:false, prodForm:false, arcForm:false,
  users:[
@@ -537,6 +562,25 @@ S.events=[
  {date:'2026-11-09',lunar:'十月初一',time:'08:00',title:'初一拜拜 · 神料统一配送日',deity:'众神',type:'初一十五',by:'黄嘉敏'},
  {date:'2026-11-23',lunar:'十月十五',time:'19:00',title:'下元节 · 水官大帝圣诞',deity:'水官大帝',type:'宝诞',by:'黄嘉敏'},
 ];
+
+/* 活动的报名、报效与流程（示范） */
+S.events.forEach((e,i)=>{e.id='E'+(i+1)});
+Object.assign(S.events[3],{place:'本庙大殿与庙前广场',desc:'中坛元帅千秋，晚上诵经祝寿、过平安桥，之后在庙前广场办平安宴。',
+ program:[{t:'19:00',w:'诵经祝寿'},{t:'20:00',w:'过平安桥'},{t:'20:45',w:'平安宴开席'},{t:'21:30',w:'喊标福品'}],
+ fees:[{name:'平安宴一桌（10 人）',price:1000,unit:'桌'},{name:'平安宴个人席位',price:100,unit:'位'},{name:'过平安桥',price:20,unit:'人'}],
+ offers:[{name:'神袍一件',price:1280,qty:1,taken:0},{name:'寿桃塔',price:388,qty:3,taken:1},{name:'花篮一对',price:168,qty:6,taken:2},{name:'五牲供品',price:288,qty:4,taken:0}],
+ auction:['金龙','发财炭','平安米（100 公斤）','神明令旗']});
+Object.assign(S.events[6],{place:'本庙阴神坛',desc:'统一上供拜有应公。人不能到的，可以请庙方代办供品。',
+ fees:[{name:'供品配套代办',price:58,unit:'份'}],offers:[{name:'金纸一份',price:38,qty:null,taken:0}]});
+Object.assign(S.events[8],{place:'本庙大殿',desc:'下元节水官大帝圣诞，解厄消灾法会。',
+ program:[{t:'19:00',w:'启坛诵经'},{t:'20:00',w:'消灾解厄科仪'},{t:'21:00',w:'化疏文、分福品'}],
+ fees:[{name:'消灾莲位',price:50,unit:'位'},{name:'补运',price:128,unit:'人'}],
+ offers:[{name:'斋天供品',price:188,qty:5,taken:0},{name:'花篮一对',price:88,qty:null,taken:0}]});
+S.events.push({id:'E10',date:'2026-12-05',lunar:'十月廿七',time:'19:00',title:'年尾谢神晚宴',deity:'众神',type:'宴会',by:'黄嘉敏',place:'庙前广场',desc:'年尾谢神，感恩一年平安。晚宴上喊标福品，善款作为明年庙务经费。',
+ program:[{t:'18:30',w:'谢神仪式'},{t:'19:30',w:'晚宴开席'},{t:'20:30',w:'喊标福品'}],
+ fees:[{name:'晚宴一桌（10 人）',price:1000,unit:'桌'},{name:'晚宴个人席位',price:100,unit:'位'}],
+ offers:[{name:'谢神金猪',price:888,qty:1,taken:0},{name:'发粿塔',price:288,qty:3,taken:0},{name:'花篮一对',price:168,qty:8,taken:0}],
+ auction:['金龙','发财炭','平安米（100 公斤）','神明令旗','招财元宝','平安灯']});
 
 S.devotees=[
  {id:'D0001',name:'陈美玲',ic:'8803••••5521',ic4:'5521',phone:'012-••• 4521',email:'meiling@example.com',addr:'A 区 · 花园路 12 号',points:1280,spend:2460,special:1,joined:'2023-03-12',
@@ -781,7 +825,7 @@ function statPanel(){
  <p class="small muted" style="margin-top:8px">人数：同一个人只算一次。重复来的人：这段时间内问同一位神明两次以上。新香客：第一次来问事就在这段时间内，点数字看名单。</p></div>`;
 }
 const SVC=[
- {k:'ask',n:'问事拿号',by:'本庙',d:'现场拿号、轮到前提醒、特别预约'},
+ {k:'appt',n:'特别预约',by:'本庙',d:'一对一办理，每场名额有限'},
  {k:'ritual',n:'法事配套',by:'本庙',d:'安神像、安祖先位、净宅、收煞、补运'},
  {k:'lamp',n:'点灯祈福',by:'本庙',d:'安太岁、光明灯、文昌灯、财神灯'},
  {k:'yin',n:'阴坛服务',by:'本庙',d:'补财库、超度、代祭代烧'},
@@ -791,6 +835,21 @@ const SVC=[
  {k:'funeral',n:'殡葬服务',by:'富贵集团 Nirvana',d:'生前规划、殡葬礼仪、骨灰位、牌位',p:1},
  {k:'more',n:'其他服务',by:'本庙',d:'择日、批命、风水、公司祈福'},
 ];
+
+function settlePledge(led,r){
+ const p=S.pledges.find(p=>p.status==='未付'&&p.led===led&&(led==='offer'?(p.name===r[0]&&p.item===r[1]&&p.amount===r[3]):(p.ev===r[0]&&p.name===r[1]&&p.item===r[2]&&p.amount===r[3])));
+ if(!p)return;p.status='已付';const d=S.devotees.find(x=>x.id===p.did);if(d){d.points+=p.amount;d.credit+=p.amount;d.spend+=p.amount}
+}
+function ledRowOf(p){const rows=S.L[p.led].rows;return rows.findIndex(r=>p.led==='offer'?(r[0]===p.name&&r[1]===p.item&&r[3]===p.amount&&r[4]==='未付'):(r[0]===p.ev&&r[1]===p.name&&r[2]===p.item&&r[3]===p.amount&&r[4]==='未付'))}
+function pledgePanel(){
+ const P=S.pledges,tot=sum(P.map(p=>p.amount)),paid=sum(P.filter(p=>p.status==='已付').map(p=>p.amount));
+ return `<div class="panel"><h3>香客的报名、报效与乐捐</h3>
+ <div class="tiles" style="margin-bottom:12px"><div class="tile"><div class="k">合计</div><div class="v">${rm(tot)}</div><div class="s">${P.length} 笔</div></div><div class="tile"><div class="k">已收</div><div class="v pos">${rm(paid)}</div></div><div class="tile gd"><div class="k">未收</div><div class="v">${rm(tot-paid)}</div></div></div>
+ <div class="tw"><table><thead><tr><th>日期</th><th>活动</th><th>香客</th><th>类型</th><th>项目</th><th class="num">金额</th><th>状态</th></tr></thead><tbody>${P.map(p=>`<tr><td>${p.date}</td><td>${esc(p.ev)}</td><td><b>${esc(p.name)}</b></td><td><span class="tag ${p.kind==='报效'?'t-gold':p.kind==='报名'?'t-info':''}">${p.kind}</span></td><td>${esc(p.item)}</td><td class="num">${rm(p.amount)}</td><td><span class="pill ${p.status==='已付'?'good':'bad'}">${p.status}</span></td></tr>`).join('')||'<tr><td colspan="7" class="muted">还没有香客报名或报效。</td></tr>'}</tbody></table></div>
+ <p class="small muted" style="margin-top:8px;white-space:normal">香客在活动页报名或报效后，会自动进到财务表：报效进「报效法宝」，报名和乐捐进「法会赞助」。在那里按「登记收款」，这里和香客那边都会变成已付，功德分同时入账。</p></div>`;
+}
+const EVT=['全部','办事','宝诞','法会','宴会','拜有应公','初一十五'];
+function evOpen(e){return !!((e.fees&&e.fees.length)||(e.offers&&e.offers.length))}
 
 /* ============ 香客端 ============ */
 const ICON={
@@ -822,10 +881,10 @@ function vLogin(){
   ${S.demo?`<div class="note"><b>试用账号</b><br>香客：陈美玲，IC 后四位 5521<br>理事与师傅：任选一个账号，PIN 1234</div>`:''}
   <p class="small muted" style="text-align:center">不会注册？到庙里报名字，管理员帮你办。</p></div>`;
 }
-const DTABS=[['home','首页'],['ask','问事'],['shop','商城'],['cal','活动'],['me','我的']];
+const DTABS=[['home','首页'],['shop','商城'],['cal','活动'],['me','我的']];
 function vDevotee(){
- const page={home:dHome,ask:dAsk,shop:dShop,cart:dCart,cal:dCal,me:dMe}[S.dTab]();
- const w={shop:'wide',home:'wide',me:'mid'}[S.dTab]||'';
+ const page=({home:dHome,shop:dShop,cart:dCart,cal:dCal,me:dMe}[S.dTab]||dHome)();
+ const w={shop:'wide',home:'wide',cal:'wide',me:'mid'}[S.dTab]||'';
  const n=cartItems().reduce((s,x)=>s+x.q,0);
  return `<main class="wrap portal ${w}">${page}</main>
  ${S.dTab==='shop'&&n?`<div class="cartbar"><span>购物车 ${n} 件 · <b>${rm(cartSub())}</b></span><button data-act="dtab" data-v="cart">去结账</button></div>`:''}
@@ -837,38 +896,44 @@ function ticketCard(a){
  return `<div class="ticket"><div class="small">${a.q.altar} · ${esc(a.q.deity)} · ${esc(S.topic)}</div><div class="no">${a.t.no}</div>
   <dl><div><dt>前面还有</dt><dd>${a.ahead} 位</dd></div><div><dt>预计等候</dt><dd>约 ${a.eta} 分钟</dd></div></dl></div>`;
 }
-function evMini(e){const p=dparts(e.date);const cls={办事:'mute',宝诞:'gold',拜有应公:'yin',初一十五:'good'}[e.type]||'mute';
+function evMini(e){const p=dparts(e.date);const cls={办事:'mute',宝诞:'gold',拜有应公:'yin',初一十五:'good',法会:'info',宴会:'gold'}[e.type]||'mute';
  return `<div class="ev"><div class="d"><b>${p.d}</b><span>${p.m}月 周${p.w}</span></div><div class="grow"><b>${esc(e.title)}</b><div class="small muted">${esc(e.time)} · 农历${esc(e.lunar)}</div></div><span class="pill ${cls}">${esc(e.type)}</span></div>`}
 function dHome(){
  const c=crowd(),a=myAhead(),d=dv();
  const h=new Date().getHours(),greet=h<11?'早安':h<18?'午安':'晚上好';
  const up=S.events.filter(e=>e.date>=TODAY).sort((x,y)=>x.date.localeCompare(y.date)).slice(0,3);
  const myOrders=S.orders.filter(o=>o.did===d.id||(!o.did&&o.who===d.name)),openO=myOrders.filter(o=>!['已送达','已完成'].includes(o.status));
- const myJobs=S.jobs.filter(j=>j.dev===d.name&&j.status!=='已完成'),appts=S.slots.filter(s=>d.appts.includes(s.id)&&s.date>=TODAY);
+ const myJobs=S.jobs.filter(j=>j.dev===d.name&&j.status!=='已完成'),appts=S.slots.filter(s=>d.appts.includes(s.id)&&s.date>=TODAY),due=S.pledges.filter(p=>p.did===d.id&&p.status==='未付');
  const next=REWARDS.find(r=>r[0]>d.credit),pct=next?Math.min(100,Math.round(d.credit/next[0]*100)):100,canRedeem=REWARDS.filter(r=>r[0]<=d.credit).length;
- const svc=x=>{const n=x.k==='ask'?null:S.products.filter(p=>p.active&&p.cat===x.k).length;
-  return `<button data-act="${x.k==='ask'?'dtab':'cat'}" data-v="${x.k}"><span class="qi ${x.p?'g':''}"><svg viewBox="0 0 24 24" aria-hidden="true">${x.k==='ask'?ICON.ask:PICON[x.k]}</svg></span><span class="grow"><b>${x.n}</b><p>${x.d}</p><span class="tag ${x.p?'t-gold':'t-info'}">${x.by}</span>${n!=null?` <span class="tag">${n} 项</span>`:''}</span></button>`};
+ const svc=x=>{const n=x.k==='appt'?null:S.products.filter(p=>p.active&&p.cat===x.k).length;
+  return `<button data-act="${x.k==='appt'?'asktab':'cat'}" data-v="${x.k}"><span class="qi ${x.p?'g':''}"><svg viewBox="0 0 24 24" aria-hidden="true">${x.k==='appt'?ICON.cal:PICON[x.k]}</svg></span><span class="grow"><b>${x.n}</b><p>${x.d}</p><span class="tag ${x.p?'t-gold':'t-info'}">${x.by}</span>${n!=null?` <span class="tag">${n} 项</span>`:''}</span></button>`};
  const todo=[
   ...myJobs.map(j=>`<div class="trow"><span class="tag t-info">服务</span><div class="grow"><b>${esc(j.svc)}</b><div class="small muted">${jobWhen(j)}${jobTeam(j).length?' · '+jobTeam(j).map(uname).map(esc).join('、'):' · 庙方正在安排人手'}</div></div><span class="pill ${j.status==='待派工'?'warn':'info'}">${j.status==='待派工'?'安排中':'已排期'}</span></div>`),
   ...appts.map(s=>`<div class="trow"><span class="tag t-gold">预约</span><div class="grow"><b>特别预约 · ${esc(s.deity)}</b><div class="small muted">${dshort(s.date)} ${s.time}</div></div><span class="pill good">已预约</span></div>`),
   ...openO.map(o=>`<div class="trow"><span class="tag">订单</span><div class="grow"><b>${o.id} · ${rm(o.total)}</b><div class="small muted">${esc(o.items)}</div></div><span class="pill warn">${o.status}</span></div>`),
+  ...due.map(p=>`<div class="trow"><span class="tag t-gold">${p.kind}</span><div class="grow"><b>${esc(p.item)} · ${rm(p.amount)}</b><div class="small muted">${esc(p.ev)}</div></div><span class="pill bad">未付</span></div>`),
  ];
+ const altars=btn=>['A','B'].map(k=>{const q=S.queues[k],w=waiting(k).length,sv=serving(k);return `<div class="altar"><div class="grow"><div class="row" style="gap:6px"><span class="realm ${q.realm}">${q.altar}</span><b>${esc(q.deity)}</b></div><div class="small muted" style="margin-top:2px">办理中 ${sv?sv.no:'—'} · 等候 ${w} 人 · 约 ${w*q.avg} 分钟</div></div>${btn?`<button class="btn pri" data-act="take" data-v="${k}">拿号</button>`:''}</div>`}).join('');
+ const topic=`<label class="field" style="margin-bottom:10px"><span>想问的事项</span><select id="topic" data-act="topic">${['家宅平安','事业','财运','健康','姻缘','学业','还愿','其他'].map(t=>`<option ${S.topic===t?'selected':''}>${t}</option>`).join('')}</select></label>`;
+ let q;
+ if(a&&a.status==='waiting')q=`<div class="tbig"><div><div class="small muted">${a.q.altar} · ${esc(a.t.deity||a.q.deity)} · ${esc(a.t.topic)}</div><div class="no">${a.t.no}</div></div><dl><div><dt>前面还有</dt><dd>${a.ahead} 位</dd></div><div><dt>预计等候</dt><dd>约 ${a.eta} 分钟</dd></div></dl></div>
+   <label class="row" style="cursor:pointer;margin:12px 0 10px"><input type="checkbox" id="remind" data-act="remind" ${d.remindOn?'checked':''} style="width:18px;height:18px;accent-color:var(--accent-bg)"><span class="grow"><b>轮到前 15 分钟提醒我</b><br><span class="small muted">这个页面开着就会提醒，人可以先去吃饭。</span></span><button type="button" class="btn sm" data-act="cancelticket">取消号码</button></label>${altars(false)}`;
+ else if(a&&a.status==='serving')q=`<div class="tbig"><div><div class="small muted">${a.q.altar} · ${esc(a.t.deity||a.q.deity)}</div><div class="no">${a.t.no}</div></div><b style="margin-left:auto">轮到你了，请到${a.q.altar}</b></div>${altars(false)}`;
+ else q=(a&&a.status==='done'?`<div class="tbig" style="margin-bottom:12px"><div class="grow"><b>${a.t.no} 已办理完成</b><div class="small muted">功德分和积分各 +10 已入账。</div></div><button class="btn sm" data-act="clearticket">好的</button></div>`:'')+topic+altars(true);
  return `
  ${a&&a.status==='waiting'&&a.eta<=15?`<div class="alert" role="alert"><div><b>快轮到你了</b><br>${a.t.no} 大约 ${a.eta} 分钟后办理，请现在回到${a.q.altar}。</div></div>`:''}
  <div class="hero"><div><div class="label">${dshort(TODAY)}</div><h2>${greet}，${esc(d.name)}</h2><p>今天两坛共 ${c.n} 人等候，人潮${c.t}</p></div>
   <div class="hstats"><div><b>${num(helpedTotal())}</b><span>本庙至今帮助香客（人次）</span></div><div><b>${d.asks.length}</b><span>我来问事（次）</span></div><div><b>${todo.length}</b><span>我进行中的事项</span></div></div></div>
  <div class="htop">
+  <div class="card"><div class="row" style="margin-bottom:12px"><h3 class="grow" style="margin:0">排队拿号</h3><span class="pill ${c.c}">人潮${c.t}</span></div>${q}
+   <div class="row" style="margin-top:10px"><button class="linkbtn" data-act="asktab">要一对一办理？特别预约（名额有限）</button></div></div>
   <div class="mcard"><div class="row"><div class="grow"><div class="mname">我的功德</div><div class="small sub">会员编号 ${d.id}</div></div><span class="mseal" aria-hidden="true">福</span></div>
    <div class="mstats"><div><div class="small sub">功德分（累计）</div><div class="pts">${num(d.points)}</div></div><div><div class="small sub">可用积分</div><div class="pts">${num(d.credit)}</div></div></div>
    <div><div class="bar"><i style="width:${pct}%"></i></div><div class="small sub" style="margin-top:6px">${next?'再 '+num(next[0]-d.credit)+' 积分可换「'+next[1]+'」':'所有法宝都可以兑换'}</div></div>
    <button class="btn sm" data-act="dtab" data-v="me">${canRedeem?'现在可以换 '+canRedeem+' 样法宝':'看可以换什么'}</button></div>
-  <div class="card"><div class="row" style="margin-bottom:10px"><h3 class="grow" style="margin:0">今日问事</h3><span class="pill ${c.c}">人潮${c.t}</span></div>
-   ${a&&a.status!=='done'?`<div class="tstrip"><span>我的号码</span><b>${a.t.no}</b><span class="grow">${a.status==='serving'?'轮到你了，请到'+a.q.altar:'前面 '+a.ahead+' 位，约 '+a.eta+' 分钟'}</span><button class="btn sm" data-act="dtab" data-v="ask">查看</button></div>`:''}
-   ${['A','B'].map(k=>{const q=S.queues[k],w=waiting(k).length,sv=serving(k);return `<div class="altar"><div class="grow"><div class="row" style="gap:6px"><span class="realm ${q.realm}">${q.altar}</span><b>${esc(q.deity)}</b></div><div class="small muted" style="margin-top:2px">办理中 ${sv?sv.no:'—'} · 等候 ${w} 人 · 约 ${w*q.avg} 分钟</div></div>${!a||a.status==='done'?`<button class="btn sm pri" data-act="take" data-v="${k}">拿号</button>`:''}</div>`}).join('')}
-   <div class="row" style="margin-top:10px"><button class="linkbtn" data-act="asktab" data-v="appt">特别预约（名额有限）</button></div></div>
-  <div class="card"><div class="row" style="margin-bottom:10px"><h3 class="grow" style="margin:0">接下来的活动</h3><button class="linkbtn" data-act="dtab" data-v="cal">全部</button></div><div class="stack">${up.map(evMini).join('')||'<p class="muted">暂时没有公布的活动。</p>'}</div></div>
+  <div class="card"><div class="row" style="margin-bottom:10px"><h3 class="grow" style="margin:0">接下来的活动</h3><button class="linkbtn" data-act="dtab" data-v="cal">报名与报效</button></div><div class="stack">${up.map(evMini).join('')||'<p class="muted">暂时没有公布的活动。</p>'}</div></div>
  </div>
- <div class="card"><div class="row"><h3 class="grow" style="margin:0">我进行中的事项</h3><button class="linkbtn" data-act="dtab" data-v="me">全部订单与记录</button></div>${todo.length?`<div class="todo">${todo.join('')}</div>`:'<p class="muted" style="margin-top:6px">目前没有进行中的服务、预约或订单。</p>'}</div>
+ <div class="card"><div class="row"><h3 class="grow" style="margin:0">我进行中的事项</h3><button class="linkbtn" data-act="dtab" data-v="me">全部订单与记录</button></div>${todo.length?`<div class="todo">${todo.join('')}</div>`:'<p class="muted" style="margin-top:6px">目前没有进行中的服务、预约、订单或待付款项。</p>'}</div>
  <div class="sec-h"><h3>服务平台</h3><span class="small muted">本庙和合作伙伴的服务，都在这里办</span></div>
  <div class="svc">${SVC.map(svc).join('')}</div>
  <div class="hgrid">
@@ -878,31 +943,7 @@ function dHome(){
 }
 function evRow(e){const p=dparts(e.date);const cls={办事:'mute',宝诞:'gold',拜有应公:'yin',初一十五:'good'}[e.type]||'mute';
  return `<div class="ev"><div class="d"><b>${p.d}</b><span>${p.m}月 周${p.w}</span></div><div class="grow"><b>${esc(e.title)}</b><div class="small muted">农历${esc(e.lunar)} · ${esc(e.time)} · ${esc(e.deity)}</div></div><span class="pill ${cls}">${esc(e.type)}</span></div>`}
-function dAsk(){
- const a=myAhead(),d=dv();
- const seg=`<div class="seg" style="align-self:flex-start"><button data-act="asktab" data-v="walk" aria-pressed="${S.askTab==='walk'}">现场拿号</button><button data-act="asktab" data-v="appt" aria-pressed="${S.askTab==='appt'}">特别预约</button></div>`;
- if(S.askTab==='appt'){
-  const sl=S.slots.filter(s=>s.date>=TODAY||d.appts.includes(s.id));
-  return seg+`<p class="small muted">特别预约是一对一办理，每场名额有限，约满就不能再加。</p>
-  <div class="card">${sl.map(s=>{const left=s.cap-s.booked,mine=d.appts.includes(s.id);
-   return `<div class="item"><div class="grow"><div class="row" style="gap:6px"><span class="realm ${s.realm}">${s.realm==='t'?'天神':'阴神'}</span><b>${esc(s.deity)}</b></div><p>${dshort(s.date)} ${s.time} · ${rm(s.fee)}</p>
-   <span class="pill ${mine?'good':left<=0?'bad':left===1?'warn':'mute'}">${mine?'你已预约':left<=0?'名额已满':'剩 '+left+' / '+s.cap+' 位'}</span></div>
-   <button class="btn sm ${mine||left<=0?'':'pri'}" data-act="book" data-v="${s.id}" ${mine||left<=0?'disabled':''}>${mine?'已预约':'预约'}</button></div>`}).join('')||'<p class="muted">目前没有开放的预约时段。</p>'}</div>`;
- }
- const cards=['A','B'].map(k=>{const q=S.queues[k],w=waiting(k).length,sv=serving(k);
-  return `<div class="card"><div class="qcard"><div class="grow"><div class="row" style="gap:6px"><span class="realm ${q.realm}">${q.altar}</span><b>${esc(q.deity)}</b></div>
-   <p class="small muted" style="margin-top:4px">等候 ${w} 人 · 约 ${w*q.avg} 分钟</p></div>
-   <div class="right"><div class="label">正在办理</div><div class="now">${sv?sv.no:'—'}</div></div></div>
-   ${!a||a.status==='done'?`<div class="row" style="margin-top:10px"><button class="btn pri grow" data-act="take" data-v="${k}">拿号问${esc(q.deity)}</button></div>`:''}</div>`}).join('');
- const c=crowd();
- return seg+`<div class="row"><span class="pill ${c.c}">今日${c.t}</span><span class="small muted">共 ${c.n} 人等候</span></div>
- ${a&&a.status==='done'?ticketCard(a):''}
- ${a&&a.status!=='done'?ticketCard(a)+(a.status==='waiting'?`
-  <div class="card"><label class="row" style="cursor:pointer"><input type="checkbox" id="remind" data-act="remind" ${d.remindOn?'checked':''} style="width:18px;height:18px;accent-color:var(--accent-bg)"><span class="grow"><b>轮到前 15 分钟提醒我</b><br><span class="small muted">这个页面开着就会提醒，人可以先去吃饭。</span></span></label></div>
-  <div class="row"><button class="btn sm" data-act="cancelticket">取消号码</button></div>`:''):`
-  <div class="field"><span>想问的事项</span><select id="topic" data-act="topic">${['家宅平安','事业','财运','健康','姻缘','学业','还愿','其他'].map(t=>`<option ${S.topic===t?'selected':''}>${t}</option>`).join('')}</select></div>`}
- ${cards}`;
-}
+
 function shopList(){
  const q=S.shopQ.trim().toLowerCase();
  let l=S.products.filter(p=>p.active&&(S.cat==='all'||p.cat===S.cat)&&(S.shopTag==='全部'||p.label===S.shopTag||p.tags.includes(S.shopTag))&&(!q||(p.name+p.desc+p.tags.join('')).toLowerCase().includes(q)));
@@ -948,9 +989,40 @@ function dCart(){
  <button class="btn pri" data-act="order">确认下单</button>`;
 }
 function dCal(){
- const up=S.events.filter(e=>e.date>=TODAY).sort((a,b)=>a.date.localeCompare(b.date));
- return `<div class="sec-h"><h3>办事与神诞日程</h3></div>${S.demo?'<p class="small muted">农历日期为示范，请用通书核对。</p>':''}<div class="card stack">${up.map(evRow).join('')}</div>
- <div class="note">想收到宝诞和拜有应公的提醒，加入 WhatsApp 社群就会收到通知。</div>`;
+ const d=dv(),all=S.events.filter(e=>e.date>=TODAY).sort((a,b)=>a.date.localeCompare(b.date));
+ const ft=S.evType||'全部',list=all.filter(e=>ft==='全部'||e.type===ft);
+ const sel=list.find(e=>e.id===S.evSel)||list.find(evOpen)||list[0];
+ const mine=S.pledges.filter(p=>p.did===d.id),due=sum(mine.filter(p=>p.status==='未付').map(p=>p.amount));
+ const tcls={办事:'',宝诞:'t-gold',法会:'t-info',宴会:'t-gold',拜有应公:'t-slate',初一十五:'t-good'};
+ const card=e=>{const p=dparts(e.date);return `<button class="evc" data-act="evsel" data-v="${e.id}" aria-pressed="${!!sel&&sel.id===e.id}"><span class="d"><b>${p.d}</b><span>${p.m}月 周${p.w}</span></span><span class="grow"><b>${esc(e.title)}</b><span class="small muted">${esc(e.time)} · 农历${esc(e.lunar)}</span><span class="ptags"><span class="tag ${tcls[e.type]||''}">${esc(e.type)}</span>${e.fees&&e.fees.length?'<span class="tag t-info">可报名</span>':''}${e.offers&&e.offers.length?'<span class="tag t-gold">可报效</span>':''}</span></span></button>`};
+ let det='<div class="card"><p class="muted">这个分类暂时没有活动。</p></div>';
+ if(sel){const e=sel,i=S.events.indexOf(e);
+  det=`<div class="card"><div class="row"><div class="grow"><h3 style="font-size:18px;margin:0">${esc(e.title)}</h3><div class="small muted" style="margin-top:4px">${dshort(e.date)} ${esc(e.time)} · 农历${esc(e.lunar)} · ${esc(e.deity)}${e.place?' · '+esc(e.place):''}</div></div><span class="tag ${tcls[e.type]||''}">${esc(e.type)}</span></div>
+   ${e.desc?`<p style="margin-top:10px;color:var(--ink2)">${esc(e.desc)}</p>`:''}
+   ${e.type==='办事'?`<div class="row" style="margin-top:12px"><button class="btn pri" data-act="dtab" data-v="home">到首页拿号</button><button class="btn" data-act="asktab">特别预约</button></div>`:''}
+   ${e.type==='初一十五'?`<div class="row" style="margin-top:12px"><button class="btn pri" data-act="cat" data-v="joss">预定神料</button><button class="btn" data-act="cat" data-v="lamp">点灯祈福</button></div>`:''}</div>
+  ${e.program&&e.program.length?`<div class="card"><h3>当天流程</h3>${e.program.map((x,k)=>`<div class="tl" ${k?'':'style="border-top:0"'}><b>${esc(x.t)}</b><span>${esc(x.w)}</span></div>`).join('')}</div>`:''}
+  ${e.fees&&e.fees.length?`<div class="card"><h3>报名与缴费</h3>${e.fees.map((f,k)=>`<div class="frow" ${k?'':'style="border-top:0"'}><div class="grow"><b>${esc(f.name)}</b><div class="small muted">${rm(f.price)}${f.unit?' / '+esc(f.unit):''}</div></div><select id="fq-${k}" aria-label="${esc(f.name)}数量">${[1,2,3,4,5,6,8,10].map(n=>`<option>${n}</option>`).join('')}</select><button class="btn sm pri" data-act="pledge" data-v="fee|${e.id}|${k}">报名</button></div>`).join('')}</div>`:''}
+  ${e.offers&&e.offers.length?`<div class="card fucard"><h3>我要报效</h3><p class="small muted" style="margin-bottom:4px">选一样报效给神明，名字会写上榜。</p>${e.offers.map((o,k)=>{const left=o.qty==null?null:o.qty-(o.taken||0);return `<div class="frow" ${k?'':'style="border-top:0"'}><div class="grow"><b>${esc(o.name)}</b><div class="small muted">${left==null?'不限份数':left>0?'还剩 '+left+' 份（共 '+o.qty+' 份）':'已经报效完了'}</div></div><span class="price">${rm(o.price)}</span>${left===0?'<span class="pill mute">圆满</span>':`<button class="btn sm fu" data-act="pledge" data-v="offer|${e.id}|${k}">报效</button>`}</div>`}).join('')}</div>`:''}
+  ${e.auction&&e.auction.length?`<div class="card"><h3>晚宴喊标的福品</h3><div class="ptags">${e.auction.map(x=>`<span class="tag t-gold">${esc(x)}</span>`).join('')}</div><p class="small muted" style="margin-top:8px">当晚现场喊标，中标可以一次付清或分期。</p></div>`:''}`;
+ }
+ const amts=[10,30,50,100,200],dk=S.donK||'香油钱',da=S.donAmt||30;
+ return `<div class="hero slim"><div><div class="label">活动</div><h2>办事、宝诞、法会与晚宴</h2><p>可以在这里报名、订桌、选要报效的项目</p></div>
+  <div class="hstats"><div><b>${all.length}</b><span>接下来的活动（场）</span></div><div><b>${all.filter(evOpen).length}</b><span>开放报名或报效（场）</span></div><div><b>${rm(due)}</b><span>我还没付的款项</span></div></div></div>
+ <div class="chips">${EVT.map(t=>`<button data-act="evtype" data-v="${t}" aria-pressed="${ft===t}">${t}</button>`).join('')}</div>
+ <div class="evgrid"><div class="stack">${list.map(card).join('')||'<div class="card"><p class="muted">这个分类暂时没有活动。</p></div>'}</div><div class="stack" id="evd">${det}</div></div>
+ <div class="hgrid">
+  <div class="card"><div class="row" style="margin-bottom:6px"><h3 class="grow" style="margin:0">我的报名与报效</h3>${due?`<button class="btn sm pri" data-act="paysheet">怎么付款</button>`:''}</div>
+   ${mine.map((p,k)=>`<div class="frow" ${k?'':'style="border-top:0"'}><span class="tag ${p.kind==='报效'?'t-gold':p.kind==='报名'?'t-info':''}">${p.kind}</span><div class="grow"><b>${esc(p.item)}</b><div class="small muted">${esc(p.ev)} · ${p.date}</div></div><span class="price">${rm(p.amount)}</span><span class="pill ${p.status==='已付'?'good':'bad'}">${p.status}</span>${p.status==='未付'?`<button class="btn sm" data-act="unpledge" data-v="${p.id}">取消</button>`:''}</div>`).join('')||'<p class="muted">还没有报名或报效。</p>'}
+   ${due?`<div class="sum" style="margin-top:8px"><span class="tot">还没付</span><span class="tot">${rm(due)}</span></div>`:''}
+   <p class="small muted" style="margin-top:8px">庙方收到款后会改成已付，功德分同时入账。</p></div>
+  <div class="card"><h3>随喜乐捐</h3><div class="stack">
+   <div class="radio">${['香油钱','建庙基金','慈善基金'].map(k=>`<label><input type="radio" name="donk" data-act="donk" value="${k}" ${dk===k?'checked':''}>${k}</label>`).join('')}</div>
+   <div class="radio">${amts.map(n=>`<label><input type="radio" name="dona" data-act="donamt" value="${n}" ${da===n?'checked':''}>RM ${n}</label>`).join('')}</div>
+   <div class="row"><input type="number" id="don-custom" min="1" placeholder="其他金额" style="flex:1;min-width:120px" aria-label="其他金额"><button class="btn pri" data-act="donate">确认乐捐</button></div>
+   <p class="small muted">填了其他金额就以它为准。</p></div></div>
+ </div>
+ ${S.demo?'<p class="small muted">农历日期为示范，请用通书核对。</p>':''}`;
 }
 function dMe(){
  const d=dv();const next=REWARDS.find(r=>r[0]>d.credit);const pct=next?Math.min(100,Math.round(d.credit/next[0]*100)):100;
@@ -1074,9 +1146,9 @@ function aTasks(){
  <div class="panel"><h3>通知</h3>${nt.map(n=>`<div class="item"><div class="grow"><b>${esc(n.text)}</b><p>${n.ts}</p></div>${n.read?'':'<span class="pill info">未读</span>'}</div>`).join('')||'<p class="muted">没有通知。</p>'}</div></div>`;
 }
 function aEvents(){
- return PH('活动发布','办事日、宝诞千秋、拜有应公、初一十五。获授权的职位都能发布，发布后香客端 的「活动」马上更新。',`<button class="btn pri" data-act="toggle" data-v="evForm">${S.evForm?'收起':'发布新活动'}</button>`)+
- (S.evForm?`<form class="panel form" id="evform" data-form="event"><label class="field"><span>日期</span><input type="date" id="ev-date" required value="2026-11-01"></label><label class="field"><span>农历</span><input type="text" id="ev-lunar" placeholder="例：九月廿三"></label><label class="field"><span>时间</span><input type="time" id="ev-time" value="20:00"></label><label class="field"><span>类型</span><select id="ev-type"><option>办事</option><option>宝诞</option><option>拜有应公</option><option>初一十五</option><option>法会</option></select></label><label class="field"><span>神明</span><input type="text" id="ev-deity" required placeholder="例：关圣帝君"></label><label class="field" style="grid-column:span 2"><span>标题</span><input type="text" id="ev-title" required placeholder="例：关圣帝君办事"></label><button class="btn pri">发布</button></form>`:'')+`
- <div class="tw"><table><thead><tr><th>日期</th><th>农历</th><th>时间</th><th>活动</th><th>神明</th><th>类型</th><th>发布人</th><th></th></tr></thead><tbody>${[...S.events].sort((a,b)=>a.date.localeCompare(b.date)).map(e=>`<tr><td class="nowrap">${dshort(e.date)}</td><td>${esc(e.lunar)}</td><td>${esc(e.time)}</td><td><b>${esc(e.title)}</b></td><td>${esc(e.deity)}</td><td><span class="pill ${{办事:'mute',宝诞:'gold',拜有应公:'yin',初一十五:'good'}[e.type]||'mute'}">${esc(e.type)}</span></td><td>${esc(e.by)}</td><td class="right">${delBtn('event:'+S.events.indexOf(e))}</td></tr>`).join('')}</tbody></table></div>`;
+ return PH('活动发布','办事、宝诞、法会、晚宴、拜有应公、初一十五。发布后按「编辑内容」可以加上流程、报名收费和报效项目。',`<button class="btn pri" data-act="toggle" data-v="evForm">${S.evForm?'收起':'发布新活动'}</button>`)+
+ (S.evForm?`<form class="panel form" id="evform" data-form="event"><label class="field"><span>日期</span><input type="date" id="ev-date" required value="2026-11-01"></label><label class="field"><span>农历</span><input type="text" id="ev-lunar" placeholder="例：九月廿三"></label><label class="field"><span>时间</span><input type="time" id="ev-time" value="20:00"></label><label class="field"><span>类型</span><select id="ev-type"><option>办事</option><option>宝诞</option><option>拜有应公</option><option>初一十五</option><option>法会</option><option>宴会</option></select></label><label class="field"><span>神明</span><input type="text" id="ev-deity" required placeholder="例：关圣帝君"></label><label class="field" style="grid-column:span 2"><span>标题</span><input type="text" id="ev-title" required placeholder="例：关圣帝君办事"></label><button class="btn pri">发布</button></form>`:'')+`
+ <div class="tw"><table><thead><tr><th>日期</th><th>农历</th><th>时间</th><th>活动</th><th>神明</th><th>类型</th><th>发布人</th><th></th></tr></thead><tbody>${[...S.events].sort((a,b)=>a.date.localeCompare(b.date)).map(e=>`<tr><td class="nowrap">${dshort(e.date)}</td><td>${esc(e.lunar)}</td><td>${esc(e.time)}</td><td><b>${esc(e.title)}</b>${e.fees&&e.fees.length?' <span class="tag t-info">可报名</span>':''}${e.offers&&e.offers.length?' <span class="tag t-gold">可报效</span>':''}</td><td>${esc(e.deity)}</td><td><span class="pill ${{办事:'mute',宝诞:'gold',拜有应公:'yin',初一十五:'good'}[e.type]||'mute'}">${esc(e.type)}</span></td><td>${esc(e.by)}</td><td><div class="acts"><button class="btn sm" data-act="dlg" data-v="event:${e.id}">编辑内容</button>${delBtn('event:'+S.events.indexOf(e))}</div></td></tr>`).join('')}</tbody></table></div>${pledgePanel()}`;
 }
 function aProducts(){
  const cn=Object.fromEntries(CATS),LB=['','热卖','新品','限量'];
@@ -1129,6 +1201,23 @@ function vDialog(){
  }
  if(type==='fresh'){const st=askStats(S.statP||'month'),r=id==='*'?st:st.rows.find(x=>x.name===id);if(!r)return '';
   h=`<div class="row"><h3 class="grow">新香客名单${id==='*'?'':' · '+esc(id)}</h3>${close}</div><div class="ptags">${r.fresh.map(n=>`<span class="tag">${esc(n)}</span>`).join('')||'<span class="muted">没有</span>'}</div><p class="small muted">${{month:'本月',year:'今年',all:'全部'}[st.p]}第一次来问事的人。</p>`;
+ }
+ if(type==='appt'){const d=dv();if(!d)return '';const sl=S.slots.filter(s=>s.date>=TODAY||d.appts.includes(s.id)).sort((a,b)=>a.date.localeCompare(b.date));
+  h=`<div class="row"><div class="grow"><h3>特别预约</h3><div class="small muted">一对一办理，每场名额有限，约满就不能再加。费用到庙里付。</div></div>${close}</div>
+  <div>${sl.map(s=>{const left=s.cap-s.booked,mine=d.appts.includes(s.id);return `<div class="item"><div class="grow"><div class="row" style="gap:6px"><span class="realm ${s.realm}">${s.realm==='t'?'天神':'阴神'}</span><b>${esc(s.deity)}</b></div><p>${dshort(s.date)} ${s.time} · ${rm(s.fee)}</p><span class="pill ${mine?'good':left<=0?'bad':left===1?'warn':'mute'}">${mine?'你已预约':left<=0?'名额已满':'剩 '+left+' / '+s.cap+' 位'}</span></div><button class="btn sm ${mine||left<=0?'':'pri'}" data-act="book" data-v="${s.id}" ${mine||left<=0?'disabled':''}>${mine?'已预约':'预约'}</button></div>`}).join('')||'<p class="muted">目前没有开放的预约时段。</p>'}</div>`;
+ }
+ if(type==='event'){const e=S.events.find(x=>x.id===id);if(!e)return '';
+  const ta=(idx,label,val,ph)=>`<label class="field" style="grid-column:1/-1"><span>${label}</span><textarea id="${idx}" placeholder="${ph}">${esc(val)}</textarea></label>`;
+  h=`<div class="row"><h3 class="grow">编辑活动</h3>${close}</div><form class="form" data-form="evedit" data-v="${e.id}">
+   <label class="field"><span>日期</span><input type="date" id="ee-date" value="${e.date}" required></label><label class="field"><span>农历</span><input type="text" id="ee-lunar" value="${esc(e.lunar)}"></label><label class="field"><span>时间</span><input type="time" id="ee-time" value="${esc(e.time)}"></label>
+   <label class="field"><span>类型</span><select id="ee-type">${EVT.slice(1).map(t=>`<option ${e.type===t?'selected':''}>${t}</option>`).join('')}</select></label><label class="field"><span>神明</span><input type="text" id="ee-deity" value="${esc(e.deity)}" required></label><label class="field"><span>地点</span><input type="text" id="ee-place" value="${esc(e.place||'')}"></label>
+   <label class="field" style="grid-column:1/-1"><span>标题</span><input type="text" id="ee-title" value="${esc(e.title)}" required></label>
+   ${ta('ee-desc','说明',e.desc||'','给香客看的一两句介绍')}
+   ${ta('ee-program','当天流程（每行一项：时间 空格 内容）',(e.program||[]).map(x=>x.t+' '+x.w).join('\n'),'19:00 诵经祝寿')}
+   ${ta('ee-fees','报名与缴费（每行一项：名称, 价格, 单位）',(e.fees||[]).map(f=>[f.name,f.price,f.unit].join(', ')).join('\n'),'平安宴一桌（10 人）, 1000, 桌')}
+   ${ta('ee-offers','报效项目（每行一项：名称, 价格, 份数。份数不填就是不限）',(e.offers||[]).map(o=>[o.name,o.price,o.qty==null?'':o.qty].join(', ')).join('\n'),'神袍一件, 1280, 1')}
+   ${ta('ee-auction','晚宴喊标的福品（每行一样）',(e.auction||[]).join('\n'),'金龙')}
+   <button class="btn pri">保存</button></form>`;
  }
  return h?`<div class="modal dlg" data-dlg="1"><div role="dialog" aria-modal="true">${h}</div></div>`:'';
 }
@@ -1227,6 +1316,7 @@ function aSettings(){
    <label class="field"><span>庙名</span><input type="text" id="cf-name" data-act="cfg" data-v="name" value="${esc(S.cfg.name)}"></label>
    <label class="field"><span>副标题</span><input type="text" id="cf-sub" data-act="cfg" data-v="sub" value="${esc(S.cfg.sub)}"></label>
    <label class="field"><span>WhatsApp 社群链接</span><input type="text" id="cf-wa" data-act="cfg" data-v="wa" value="${esc(S.cfg.wa)}" placeholder="https://chat.whatsapp.com/…"></label>
+   <label class="field"><span>付款说明（香客按「怎么付款」时看到）</span><input type="text" id="cf-pay" data-act="cfg" data-v="pay" value="${esc(S.cfg.pay)}"></label>
    <label class="field"><span>系统启用前已帮助的香客人次</span><input type="number" id="cf-base" data-act="cfg" data-v="helpBase" value="${S.helpBase}" min="0"></label>
   </div></div>
   <div class="panel"><h3>神明标签</h3><p class="small muted" style="margin-bottom:10px">问事记录都用这些标签，统计人数时按标签算。</p>
@@ -1258,8 +1348,8 @@ function report(k){
 }
 
 /* ============ 储存、登入与渲染 ============ */
-const KEY='temple-webapp-v2';
-const UIKEYS=['view','dTab','aTab','askTab','cat','shopQ','shopTag','shopSort','theme','jobEdit','newPhoto','ledger','uid','meId','cart','ck','topic','devQ','arcQ','arcYear','arcType','meeting','evForm','regForm','prodForm','arcForm','slotForm','lForm','txForm','userForm','renaming','auth','loginTab','regSelf','sureKey','dlg','statP','devDeity'];
+const KEY='temple-webapp-v3';
+const UIKEYS=['view','dTab','aTab','askTab','cat','shopQ','shopTag','shopSort','theme','jobEdit','newPhoto','ledger','uid','meId','cart','ck','topic','devQ','arcQ','arcYear','arcType','meeting','evForm','regForm','prodForm','arcForm','slotForm','lForm','txForm','userForm','renaming','auth','loginTab','regSelf','sureKey','dlg','statP','devDeity','evSel','evType','donK','donAmt'];
 function dataPart(){const o={};for(const k in S)if(!UIKEYS.includes(k))o[k]=S[k];return o}
 function uiPart(){const o={};for(const k of UIKEYS)if(k!=='newPhoto'&&k in S)o[k]=S[k];return o}
 let saveWarned=false;
@@ -1283,7 +1373,7 @@ function validateAuth(){
 function applyTheme(){document.documentElement.setAttribute('data-theme',S.theme==='dark'?'dark':'light')}
 function clearDemo(){
  S.devotees=[];S.orders=[];S.leads=[];S.tickets=[];S.jobs=[];S.notifs=[];S.audit=[];S.events=[];S.slots=[];S.docs=[];S.meetings=[];S.att={};S.tx=[];S.helped={};S.helpBase=0;S.asklog=[];S.dlg=null;
- Object.values(S.L).forEach(l=>l.rows=[]);S.queues.A.last=0;S.queues.B.last=0;S.seq={order:1000,job:0,dev:0,rcpt:0,pv:0};S.demo=false;S.meeting=null;
+ Object.values(S.L).forEach(l=>l.rows=[]);S.queues.A.last=0;S.queues.B.last=0;S.seq={order:1000,job:0,dev:0,rcpt:0,pv:0,pl:0,ev:0};S.pledges=[];S.demo=false;S.meeting=null;
 }
 function restoreDemo(){const keep=uiPart();for(const k of Object.keys(S))delete S[k];Object.assign(S,JSON.parse(INIT),keep);validateAuth()}
 function sysNotify(t,b){try{if('Notification' in window&&Notification.permission==='granted')new Notification(t,{body:b})}catch(e){}}
@@ -1336,7 +1426,21 @@ const ACT={
  logout(){S.auth=null;S.uid=null;S.meId=null;S.view='login';S.cart={};window.scrollTo(0,0)},
  dtab(v){S.dTab=v;window.scrollTo(0,0)},
  atab(v){goAdmin(v)},
- asktab(v){S.dTab='ask';S.askTab=v;window.scrollTo(0,0)},
+ asktab(){S.dlg='appt:1'},
+ evsel(v){S.evSel=v;if(window.innerWidth<=860)setTimeout(()=>{const el=document.getElementById('evd');if(el)el.scrollIntoView({behavior:'smooth',block:'start'})},30)},
+ evtype(v){S.evType=v;S.evSel=null},
+ donk(v){S.donK=v},donamt(v){S.donAmt=Number(v)},
+ pledge(v){const[kind,eid,ix]=v.split('|'),e=S.events.find(x=>x.id===eid),d=dv();if(!e||!d)return;const base={id:'PL'+(++S.seq.pl),did:d.id,name:d.name,eid,ev:e.title,status:'未付',date:TODAY};
+  if(kind==='fee'){const f=e.fees[+ix],q=Math.max(1,Number((document.getElementById('fq-'+ix)||{}).value)||1),amt=f.price*q,item=f.name+(q>1?' ×'+q:'');
+   S.pledges.unshift({...base,led:'sponsor',kind:'报名',item,amount:amt});S.L.sponsor.rows.unshift([e.title,d.name,item,amt,'未付','','']);toast(`已报名「${item}」，应付 ${rm(amt)}`)}
+  else{const o=e.offers[+ix];if(o.qty!=null&&(o.taken||0)>=o.qty){toast('这一项已经报效完了');return}o.taken=(o.taken||0)+1;
+   S.pledges.unshift({...base,led:'offer',kind:'报效',item:o.name,amount:o.price});S.L.offer.rows.unshift([d.name,o.name,e.deity,o.price,'未付','','','']);toast(`感恩报效「${o.name}」，应付 ${rm(o.price)}`)}},
+ unpledge(id){const p=S.pledges.find(x=>x.id===id);if(!p||p.status!=='未付')return;const ri=ledRowOf(p);if(ri>=0)S.L[p.led].rows.splice(ri,1);
+  if(p.kind==='报效'){const e=S.events.find(x=>x.id===p.eid),o=e&&(e.offers||[]).find(x=>x.name===p.item);if(o&&o.taken>0)o.taken--}
+  S.pledges=S.pledges.filter(x=>x.id!==id);toast('已取消')},
+ donate(){const d=dv(),c=Math.round(Number((document.getElementById('don-custom')||{}).value)||0),amt=c>0?c:(S.donAmt||30),k=S.donK||'香油钱';
+  S.pledges.unshift({id:'PL'+(++S.seq.pl),did:d.id,name:d.name,eid:'',ev:'随喜乐捐',led:'sponsor',kind:'乐捐',item:k,amount:amt,status:'未付',date:TODAY});S.L.sponsor.rows.unshift(['随喜乐捐',d.name,k,amt,'未付','','']);toast(`感恩乐捐${k} ${rm(amt)}`)},
+ paysheet(){const d=dv(),due=sum(S.pledges.filter(p=>p.did===d.id&&p.status==='未付').map(p=>p.amount));openSheet('怎么付款',`<p>还没付的款项合计 <b>${rm(due)}</b></p><p style="margin-top:8px;white-space:pre-line">${esc(S.cfg.pay)}</p><p class="small muted" style="margin-top:8px">庙方收到款后会把记录改成已付。</p>`)},
  cat(v){if(S.dTab!=='shop')window.scrollTo(0,0);S.dTab='shop';S.cat=v},
  topic(v){S.topic=v},
  remind(v,el){dv().remindOn=el.checked;toast(el.checked?'轮到前 15 分钟会提醒你':'已关闭提醒')},
@@ -1373,8 +1477,8 @@ const ACT={
  ledger(v){S.ledger=v;S.lForm=false},
  collect(i){const L=S.L[S.ledger],r=L.rows[+i],t=nowStr().slice(0,16);
   if(S.ledger==='auction'){const n=r[4]==='一次性'?1:Number(r[4].replace(/\D/g,''))||1;const pay=Math.min(r[6],Math.round(r[3]/n));r[5]+=pay;r[6]-=pay;r[8]=r[6]>0?'分期中':'已付清';if(r[6]<=0)r[7]='';addTx('in','宴会标品与赞助',pay,'标品 · '+r[1]+' · '+r[2]);log('收款','宴会标品 · '+r[1],`${r[2]} 付 ${rm(pay)}，余额 ${rm(r[6])}`);toast(`已登记 ${r[2]} 付款 ${rm(pay)}`)}
-  else if(S.ledger==='offer'){r[4]='已付';r[5]=t;r[6]='现金';r[7]=me().name;addTx('in','香油乐捐',r[3],'报效法宝 · '+r[0]+' · '+r[1]);log('收款','报效法宝 · '+r[1],`${r[0]} 付 ${rm(r[3])}`);toast(`已登记 ${r[0]} 付款`)}
-  else{r[4]='已付';r[5]=t;r[6]=me().name;addTx('in','宴会标品与赞助',r[3],'法会赞助 · '+r[0]+' · '+r[1]);log('收款','法会赞助 · '+r[0],`${r[1]} 付 ${rm(r[3])}`);toast(`已登记 ${r[1]} 付款`)}},
+  else if(S.ledger==='offer'){settlePledge('offer',r);r[4]='已付';r[5]=t;r[6]='现金';r[7]=me().name;addTx('in','香油乐捐',r[3],'报效法宝 · '+r[0]+' · '+r[1]);log('收款','报效法宝 · '+r[1],`${r[0]} 付 ${rm(r[3])}`);toast(`已登记 ${r[0]} 付款`)}
+  else{settlePledge('sponsor',r);r[4]='已付';r[5]=t;r[6]=me().name;addTx('in','宴会标品与赞助',r[3],'法会赞助 · '+r[0]+' · '+r[1]);log('收款','法会赞助 · '+r[0],`${r[1]} 付 ${rm(r[3])}`);toast(`已登记 ${r[1]} 付款`)}},
  meeting(v){S.meeting=v},
  att(v){const[uid,val]=v.split(':');const u=S.users.find(x=>x.uid===uid),m=S.meetings.find(x=>x.id===S.meeting);if(!m||S.att[m.id][uid]===val)return;S.att[m.id][uid]=val;log('修改','开会打卡 · '+m.date,`${u.name}：${{P:'出席',A:'缺席',L:'请假'}[val]}`)},
  newmeeting(){const id='M'+Date.now().toString(36);S.meetings.push({id,date:TODAY,title:'会议（'+TODAY+'）'});S.att[id]=Object.fromEntries(committee().map(u=>[u.uid,'P']));S.meeting=id;log('新增','开会打卡','会议（'+TODAY+'）');toast('已新增今天的会议，预设全员出席，再逐个调整')},
@@ -1392,7 +1496,7 @@ const ACT={
   if(k==='helpBase')S.helpBase=Math.max(0,Math.round(Number(v)||0));
   else if(k==='wa'){if(v&&!/^https:\/\//.test(v)){toast('链接要以 https:// 开头');return}S.cfg.wa=v}
   else if(v)S.cfg[k]=v;
-  log('修改','系统设置',{name:'庙名',sub:'副标题',wa:'WhatsApp 社群链接',helpBase:'历年帮助人次'}[k]);toast('已保存')},
+  log('修改','系统设置',{name:'庙名',sub:'副标题',wa:'WhatsApp 社群链接',helpBase:'历年帮助人次',pay:'付款说明'}[k]);toast('已保存')},
  qcfg(v,el){const[k,f]=v.split('.'),q=S.queues[k];if(f==='avg')q.avg=Math.max(1,Math.round(Number(el.value)||q.avg));else if(el.value.trim())q.deity=el.value.trim();log('修改','系统设置',q.altar+'设置');toast('已保存')},
  uphone(uid,el){const u=S.users.find(x=>x.uid===uid);u.phone=el.value.trim();log('修改','账号 · '+u.name,'更新 WhatsApp 号码');toast('已保存')},
  upin(uid,el){const u=S.users.find(x=>x.uid===uid),v=el.value.trim();if(!/^[0-9]{4,6}$/.test(v)){toast('PIN 要 4 到 6 位数字');return}u.pin=v;log('修改','账号 · '+u.name,'重设 PIN');toast('PIN 已更新')},
@@ -1450,7 +1554,7 @@ document.addEventListener('submit',e=>{
   S.dlg='dev:'+d.id;log('修改','香客资料 · '+d.id,ch.join('、')||'没有变动');toast('已保存')}
  if(f==='prodedit'){const p=S.products.find(x=>x.id===e.target.dataset.v),np=n('pe-price'),ch=[];if($('pe-name')!==p.name)ch.push(`名称 ${p.name} → ${$('pe-name')}`);if(np!==p.price)ch.push(`卖价 ${rm(p.price)} → ${rm(np)}`);if($('pe-cat')!==p.cat)ch.push('分类');if($('pe-desc')!==p.desc)ch.push('说明');
   p.name=$('pe-name');p.cat=$('pe-cat');p.price=np;p.desc=$('pe-desc');deco(p);S.dlg=null;log('修改','商品 · '+p.name,ch.join('、')||'没有变动');toast('已保存')}
- if(f==='event'){const ev={date:$('ev-date'),lunar:$('ev-lunar')||'待补',time:$('ev-time'),title:$('ev-title'),deity:$('ev-deity'),type:$('ev-type'),by:me().name};S.events.push(ev);S.evForm=false;log('新增','活动发布',`${ev.date} ${ev.title}`);toast('已发布，香客端的活动页已更新')}
+ if(f==='event'){const ev={date:$('ev-date'),lunar:$('ev-lunar')||'待补',time:$('ev-time'),title:$('ev-title'),deity:$('ev-deity'),type:$('ev-type'),by:me().name,id:'E'+(++S.seq.ev)};S.events.push(ev);S.evForm=false;log('新增','活动发布',`${ev.date} ${ev.title}`);toast('已发布，香客端的活动页已更新')}
  if(f==='product'){const p=pp($('pd-cat'),$('pd-name'),n('pd-price'),$('pd-desc'));p.label=$('pd-label');p.img=S.newPhoto;S.newPhoto=null;S.products.push(p);S.prodForm=false;log('新增','商品 · '+p.name,`上架，卖价 ${rm(p.price)}`);toast('已上架 '+p.name)}
  if(f==='register'){const ic=$('rg-ic');if(!/^[0-9]{4}$/.test(ic)){toast('IC 后四位要 4 位数字');return}const d=newDevotee({name:$('rg-name'),ic,phone:$('rg-phone'),email:$('rg-email'),addr:$('rg-addr')});S.regForm=false;S.devQ=d.name;log('新增','香客资料',`代注册 ${d.name}（${d.id}）`);toast(`已帮 ${d.name} 注册，会员编号 ${d.id}`)}
  if(f==='doc'){const date=$('dc-date');const d={year:Number(date.slice(0,4)),date,type:$('dc-type'),title:$('dc-title'),ref:$('dc-ref')||'未编号',by:me().name};S.docs.unshift(d);S.docs.sort((a,b)=>b.date.localeCompare(a.date));S.arcForm=false;log('新增','文书档案',`${d.type}：${d.title}`);toast('已存档')}
@@ -1469,6 +1573,13 @@ document.addEventListener('submit',e=>{
   else{row=[...v,me().name,`PV-${y}-${String(++S.seq.pv).padStart(3,'0')}`];addTx('out',v[2],v[3],v[1])}
   L.rows.unshift(row);S.lForm=false;log('新增','财务表 · '+L.name,row.slice(0,4).join(' · '));toast('已保存')}
  if(f==='adduser'){const u={uid:'U'+String(S.users.length+1).padStart(3,'0'),name:$('us-name'),role:$('us-role'),pin:'1234',phone:''};S.users.push(u);S.userForm=false;log('新增','账号',`${u.name}（${u.role}）`);toast(`已新增 ${u.name}，预设 PIN 1234，请到系统设置更改`)}
+ if(f==='evedit'){const ev=S.events.find(x=>x.id===e.target.dataset.v),raw=id=>document.getElementById(id).value,lines=t=>t.split('\n').map(x=>x.trim()).filter(Boolean),parts=l=>l.split(/[,，]/).map(x=>x.trim()),old=ev.offers||[];
+  Object.assign(ev,{date:$('ee-date'),lunar:$('ee-lunar')||'待补',time:$('ee-time'),type:$('ee-type'),deity:$('ee-deity'),place:$('ee-place'),title:$('ee-title'),desc:$('ee-desc'),
+   program:lines(raw('ee-program')).map(l=>{const m=l.match(/^(\S+)\s+(.*)$/);return m?{t:m[1],w:m[2]}:{t:'',w:l}}),
+   fees:lines(raw('ee-fees')).map(l=>{const a=parts(l);return{name:a[0],price:Math.max(0,Math.round(Number(a[1])||0)),unit:a[2]||''}}),
+   offers:lines(raw('ee-offers')).map(l=>{const a=parts(l),o=old.find(x=>x.name===a[0]);return{name:a[0],price:Math.max(0,Math.round(Number(a[1])||0)),qty:a[2]?Math.max(1,Math.round(Number(a[2])||1)):null,taken:o?o.taken||0:0}}),
+   auction:lines(raw('ee-auction'))});
+  S.dlg=null;log('修改','活动 · '+ev.title,'更新活动内容');toast('已保存，香客端的活动页已更新')}
  if(f==='rename'){const u=S.users.find(x=>x.uid===e.target.dataset.v),nv=$('rn-name');if(nv&&nv!==u.name){const old=u.name;log('修改','个人资料 · '+u.uid,`姓名 ${old} → ${nv}`);u.name=nv;toast(`已改名。之前的操作记录仍显示「${old}」`)}S.renaming=null}
  render();
 });
