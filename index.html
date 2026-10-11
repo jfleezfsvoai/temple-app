@@ -1,0 +1,1146 @@
+<!doctype html>
+<html lang="zh-Hans">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="神庙 App">
+<title>神庙 App 原型</title>
+<style>:root{padding:env(safe-area-inset-top,0px) 0 env(safe-area-inset-bottom,0px)}img{max-width:100%}</style>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&display=swap">
+<style>
+/* 版面：顶栏切换「香客端 / 管理后台」。香客端是一台手机画面 + 功能对照表；后台是侧栏 + 工作区。
+   视觉：白底、中性灰、单一蓝色强调，圆角卡片；状态用圆形 pill，属性用方形 tag。 */
+:root{
+  --bg:#F6F7F9; --surface:#FFFFFF; --surface2:#F1F3F6; --line:#E3E6EB;
+  --ink:#16181D; --ink2:#4A5160; --ink3:#7B8494;
+  --accent:#3355D1; --accent-bg:#3355D1; --accent-fg:#FFFFFF; --accent-soft:#EAEEFC;
+  --pri-bg:#16181D; --pri-fg:#FFFFFF;
+  --good:#17784A; --good-soft:#E2F4EA; --warn:#95590A; --warn-soft:#FCF0D8; --bad:#BE3A31; --bad-soft:#FCE9E6;
+  --info:#2D55C9; --info-soft:#E8EEFD; --violet:#6540C2; --violet-soft:#F0EBFC;
+  --slate:#3C4558; --slate-soft:#E8EBF1; --amber:#855D00; --amber-soft:#FAEFD0;
+  --card:#16181D; --card-fg:#FFFFFF; --card-sub:#B9BFCB; --card-track:#3A3F4A;
+  --shade:rgba(15,20,35,.5); --shadow:rgba(20,25,40,.10);
+  --s1:#2a78d6; --s2:#eb6834;
+  --fu:#D9232B; --fu-fg:#FFFFFF; --fu-sub:#FFF0EE; --fu-gold:#FFE08A; --fu-track:#EE7F84; --fu-ink:#C01C24; --fu-btn:#D9232B; --fu-btn-fg:#FFFFFF;
+  --font:"Poppins","Noto Sans SC","PingFang SC","Microsoft YaHei",system-ui,sans-serif;
+  --display:var(--font);
+  --r:14px;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0F1114; --surface:#17191E; --surface2:#21242B; --line:#2D3139;
+  --ink:#F2F4F7; --ink2:#B7BDC9; --ink3:#868E9C;
+  --accent:#93A9FF; --accent-bg:#4868E0; --accent-fg:#FFFFFF; --accent-soft:#1D2646;
+  --pri-bg:#F2F4F7; --pri-fg:#16181D;
+  --good:#62C99A; --good-soft:#14301F; --warn:#E5B05A; --warn-soft:#33270F; --bad:#F08A80; --bad-soft:#3A1D1A;
+  --info:#93A9FF; --info-soft:#1D2646; --violet:#B9A1FF; --violet-soft:#2A2147;
+  --slate:#C4CBDA; --slate-soft:#272C37; --amber:#E2BD63; --amber-soft:#33290F;
+  --card:#262A33; --card-fg:#FFFFFF; --card-sub:#B9BFCB; --card-track:#454B58;
+  --shade:rgba(0,0,0,.6); --shadow:rgba(0,0,0,.4);
+  --fu:#7E1D22; --fu-fg:#FFF4E0; --fu-sub:#EBCDB8; --fu-gold:#F3CF7A; --fu-track:#A4474A; --fu-ink:#F3CF7A; --fu-btn:#E7C06A; --fu-btn-fg:#3A2206;
+  --s1:#3987e5; --s2:#d95926; color-scheme:dark;
+}}
+:root[data-theme="dark"]{
+  --bg:#0F1114; --surface:#17191E; --surface2:#21242B; --line:#2D3139;
+  --ink:#F2F4F7; --ink2:#B7BDC9; --ink3:#868E9C;
+  --accent:#93A9FF; --accent-bg:#4868E0; --accent-fg:#FFFFFF; --accent-soft:#1D2646;
+  --pri-bg:#F2F4F7; --pri-fg:#16181D;
+  --good:#62C99A; --good-soft:#14301F; --warn:#E5B05A; --warn-soft:#33270F; --bad:#F08A80; --bad-soft:#3A1D1A;
+  --info:#93A9FF; --info-soft:#1D2646; --violet:#B9A1FF; --violet-soft:#2A2147;
+  --slate:#C4CBDA; --slate-soft:#272C37; --amber:#E2BD63; --amber-soft:#33290F;
+  --card:#262A33; --card-fg:#FFFFFF; --card-sub:#B9BFCB; --card-track:#454B58;
+  --shade:rgba(0,0,0,.6); --shadow:rgba(0,0,0,.4);
+  --fu:#7E1D22; --fu-fg:#FFF4E0; --fu-sub:#EBCDB8; --fu-gold:#F3CF7A; --fu-track:#A4474A; --fu-ink:#F3CF7A; --fu-btn:#E7C06A; --fu-btn-fg:#3A2206;
+  --s1:#3987e5; --s2:#d95926; color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:14px;line-height:1.55}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+h1,h2,h3,h4,p,dl,dd{margin:0}
+h2,h3{font-weight:600;text-wrap:balance;letter-spacing:-.01em}
+b{font-weight:600}
+
+/* 顶栏 */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:30;background:var(--surface);border-bottom:1px solid var(--line)}
+.top-in{max-width:1280px;margin:0 auto;padding:10px 16px;display:flex;flex-wrap:wrap;gap:10px 14px;align-items:center}
+.brand{display:flex;align-items:center;gap:10px;margin-right:auto}
+.brand-seal{width:34px;height:34px;border-radius:10px;background:var(--pri-bg);color:var(--pri-fg);font-weight:600;font-size:16px;display:grid;place-items:center}
+.brand b{font-size:16px}
+.demo-chip{font-size:11px;padding:2px 9px;border-radius:99px;background:var(--surface2);color:var(--ink2);font-weight:500}
+.seg{display:inline-flex;background:var(--surface2);border-radius:10px;padding:3px;gap:2px}
+.seg button{border:0;background:transparent;padding:6px 14px;border-radius:8px;font-weight:500;color:var(--ink2)}
+.seg button[aria-pressed="true"]{background:var(--surface);color:var(--ink);font-weight:600;box-shadow:0 1px 2px var(--shadow)}
+.who{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--ink2)}
+select,input[type=text],input[type=number],input[type=date],input[type=time],textarea{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:7px 10px;min-width:0;max-width:100%}
+.badge{display:inline-grid;place-items:center;min-width:18px;height:18px;padding:0 5px;border-radius:99px;background:var(--bad);color:var(--surface);font-size:11px;font-weight:600;margin-left:4px}
+
+.wrap{max-width:1280px;margin:0 auto;padding-inline:16px;padding-block:20px 48px}
+
+/* 通用 */
+.btn{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:7px 13px;font-weight:500;white-space:nowrap}
+.btn:hover{border-color:var(--ink3)}
+.btn.pri{background:var(--pri-bg);border-color:var(--pri-bg);color:var(--pri-fg);font-weight:600}
+.btn.pri:hover{opacity:.88}
+.btn.sm{padding:5px 10px;font-size:12.5px;border-radius:8px}
+.btn.wa{background:var(--good);border-color:var(--good);color:var(--surface);font-weight:600}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.pill{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:500;padding:2px 10px;border-radius:99px;white-space:nowrap}
+.pill::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.pill.good{background:var(--good-soft);color:var(--good)} .pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill.bad{background:var(--bad-soft);color:var(--bad)} .pill.mute{background:var(--surface2);color:var(--ink2)}
+.pill.info{background:var(--info-soft);color:var(--info)}
+.pill.yin{background:var(--slate-soft);color:var(--slate)} .pill.gold{background:var(--amber-soft);color:var(--amber)}
+.tag{display:inline-block;font-size:11px;font-weight:500;padding:1px 7px;border-radius:6px;background:var(--surface2);color:var(--ink2);white-space:nowrap}
+.tag.t-amber{background:var(--amber-soft);color:var(--amber)} .tag.t-slate{background:var(--slate-soft);color:var(--slate)}
+.tag.t-info{background:var(--info-soft);color:var(--info)} .tag.t-good{background:var(--good-soft);color:var(--good)}
+.tag.t-violet{background:var(--violet-soft);color:var(--violet)} .tag.t-bad{background:var(--bad-soft);color:var(--bad)}
+.muted{color:var(--ink3)} .small{font-size:12.5px} .right{text-align:right} .nowrap{white-space:nowrap}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap} .grow{flex:1;min-width:0}
+.stack{display:flex;flex-direction:column;gap:12px}
+.label{font-size:11.5px;font-weight:500;color:var(--ink3)}
+
+/* 香客端 */
+.dev{display:grid;grid-template-columns:minmax(0,400px) minmax(0,1fr);gap:28px;align-items:start}
+.phone{background:var(--bg);border:1px solid var(--line);border-radius:28px;overflow:hidden;display:flex;flex-direction:column;height:min(800px,calc(100dvh - 110px));min-height:520px;box-shadow:0 14px 44px var(--shadow)}
+.ph-head{background:var(--surface);border-bottom:1px solid var(--line);padding:14px 16px 12px;display:flex;align-items:center;gap:10px}
+.ph-head .plaque{font-weight:600;font-size:18px}
+.ph-head small{display:block;font-size:12px;color:var(--ink3)}
+.ph-head .bell{margin-left:auto;position:relative;border:0;background:var(--surface2);color:var(--ink);border-radius:10px;padding:6px 12px;font-size:12.5px;font-weight:500}
+.ph-head .bell i{position:absolute;top:-3px;right:-3px;width:10px;height:10px;border-radius:50%;background:var(--bad);border:2px solid var(--surface)}
+.ph-body{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:12px}
+.ph-body>*{flex:none}
+.ph-tabs{display:grid;grid-template-columns:repeat(5,1fr);background:var(--surface);border-top:1px solid var(--line)}
+.ph-tabs button{border:0;background:transparent;padding:8px 2px 9px;display:flex;flex-direction:column;align-items:center;gap:2px;font-size:11.5px;color:var(--ink3)}
+.ph-tabs button[aria-current="true"]{color:var(--accent);font-weight:600}
+.ph-tabs svg,.qi svg,.pimg svg{fill:none;stroke:currentColor;stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+.ph-tabs svg{width:22px;height:22px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px}
+.card h3{font-size:15px;margin-bottom:6px}
+.sec-h{display:flex;align-items:baseline;justify-content:space-between;margin-top:4px}
+.sec-h h3{font-size:15.5px}
+.linkbtn{border:0;background:none;color:var(--accent);font-weight:500;padding:0;font-size:12.5px}
+.meter{display:grid;grid-template-columns:repeat(3,1fr);gap:4px;margin:8px 0 6px}
+.meter i{height:6px;border-radius:4px;background:var(--surface2)}
+.meter[data-l="1"] i:nth-child(-n+1){background:var(--good)}
+.meter[data-l="2"] i:nth-child(-n+2){background:var(--warn)}
+.meter[data-l="3"] i{background:var(--bad)}
+.quick{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.quick button{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 6px;display:flex;flex-direction:column;gap:6px;align-items:center;text-align:center;font-size:12px;color:var(--ink2)}
+.qi{width:36px;height:36px;border-radius:11px;background:var(--accent-soft);color:var(--accent);display:grid;place-items:center}
+.qi svg{width:19px;height:19px}
+.alert{border-radius:var(--r);padding:12px 14px;background:var(--warn-soft);color:var(--ink);display:flex;gap:10px;align-items:flex-start}
+.alert b{color:var(--warn)}
+.ticket{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px 16px 16px;text-align:center}
+.ticket.now{background:var(--accent-soft);border-color:var(--accent)}
+.ticket .small{color:var(--ink3)}
+.ticket .no{font-weight:600;font-size:52px;line-height:1.15;color:var(--accent);letter-spacing:.02em}
+.ticket dl{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:10px;padding-top:12px;border-top:1px dashed var(--line)}
+.ticket dt{font-size:11.5px;color:var(--ink3)} .ticket dd{font-weight:600;font-size:16px}
+.qcard{display:flex;gap:12px;align-items:center}
+.qcard .now{font-weight:600;font-size:24px;line-height:1.1}
+.realm{font-size:11px;font-weight:500;padding:2px 8px;border-radius:6px}
+.realm.t{background:var(--amber-soft);color:var(--amber)} .realm.y{background:var(--slate-soft);color:var(--slate)}
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px;scrollbar-width:none}
+.chips button{flex:none;border:1px solid var(--line);background:var(--surface);border-radius:99px;padding:5px 13px;font-size:13px;color:var(--ink2)}
+.chips button[aria-pressed="true"]{background:var(--pri-bg);border-color:var(--pri-bg);color:var(--pri-fg);font-weight:500}
+.chips.sub button{padding:3px 11px;font-size:12px;border-radius:8px}
+.chips.sub button[aria-pressed="true"]{background:var(--accent-soft);border-color:var(--accent);color:var(--accent)}
+.filters{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px}
+.item{display:flex;gap:10px;align-items:flex-start;padding:11px 0;border-bottom:1px solid var(--line)}
+.item:last-child{border-bottom:0;padding-bottom:2px} .item:first-child{padding-top:2px}
+.item .price{font-weight:600;white-space:nowrap}
+.item p{color:var(--ink2);font-size:12.5px}
+.qty{display:inline-flex;align-items:center;gap:8px}
+.qty button{width:28px;height:28px;border-radius:9px;border:1px solid var(--line);background:var(--surface);line-height:1;font-weight:600}
+.pgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.pcard{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;display:flex;flex-direction:column;min-width:0}
+.pimg{position:relative;aspect-ratio:4/3;display:grid;place-items:center;background:var(--surface2);color:var(--ink3)}
+.pimg svg{width:34px;height:34px}
+.pimg img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.pimg.c-goods,.pimg.c-lamp{background:var(--amber-soft);color:var(--amber)}
+.pimg.c-ritual,.pimg.c-more{background:var(--info-soft);color:var(--info)}
+.pimg.c-yin,.pimg.c-funeral{background:var(--slate-soft);color:var(--slate)}
+.pimg.c-joss{background:var(--violet-soft);color:var(--violet)}
+.pimg.c-health{background:var(--good-soft);color:var(--good)}
+.plabel{position:absolute;top:8px;left:8px;font-size:11px;font-weight:600;padding:2px 8px;border-radius:7px;background:var(--surface);color:var(--ink)}
+.plabel.l-hot{background:var(--bad);color:var(--surface)} .plabel.l-new{background:var(--accent-bg);color:var(--accent-fg)}
+.plabel.l-ltd{background:var(--pri-bg);color:var(--pri-fg)}
+.pbody{padding:10px 11px 11px;display:flex;flex-direction:column;gap:6px;flex:1}
+.pname{font-size:13.5px;line-height:1.35}
+.pdesc{font-size:12px;color:var(--ink3);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.ptags{display:flex;flex-wrap:wrap;gap:4px}
+.pfoot{margin-top:auto;padding-top:4px;display:flex;flex-direction:column;gap:7px}
+.pfoot .price{font-weight:600;font-size:15px} .pfoot .price small{font-weight:400;font-size:11.5px;color:var(--ink3)}
+.pfoot .btn{width:100%}
+.pfoot .qty{justify-content:space-between;background:var(--surface2);border-radius:10px;padding:3px}
+.pfoot .qty button{border:0;background:var(--surface)}
+.cartbar{background:var(--pri-bg);color:var(--pri-fg);padding:10px 14px;display:flex;align-items:center;gap:10px;font-size:13px}
+.cartbar button{margin-left:auto;border:0;border-radius:9px;background:var(--pri-fg);color:var(--pri-bg);font-weight:600;padding:6px 13px}
+.mcard{background:var(--fu);color:var(--fu-fg);border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:14px}
+.mcard .sub{color:var(--fu-sub)}
+.mname{font-size:18px;font-weight:600}
+.mseal{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--fu-gold);color:var(--fu-gold);display:grid;place-items:center;font-weight:600;font-size:18px}
+.mstats{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.mcard .pts{font-weight:600;font-size:32px;line-height:1.2;color:var(--fu-gold)}
+.bar{height:6px;border-radius:4px;background:var(--fu-track);overflow:hidden}
+.bar i{display:block;height:100%;background:var(--fu-gold);border-radius:4px}
+.btn.fu{background:var(--fu-btn);border-color:var(--fu-btn);color:var(--fu-btn-fg);font-weight:600}
+.fucard h3{color:var(--fu-ink)}
+.foot{max-width:1280px;margin:0 auto;padding:0 16px 32px;color:var(--ink3);font-size:12.5px}
+.ev{display:flex;gap:12px;align-items:flex-start}
+.ev .d{flex:none;width:50px;text-align:center;border-radius:11px;overflow:hidden;background:var(--surface2)}
+.ev .d b{display:block;font-size:18px;line-height:1.5}
+.ev .d span{display:block;font-size:10.5px;color:var(--ink3);padding:0 0 4px}
+.field{display:flex;flex-direction:column;gap:4px;border:0;padding:0;margin:0;min-width:0} .field>span,.field>legend{font-size:12px;color:var(--ink2);font-weight:500;padding:0}
+.field>legend{margin-bottom:4px}
+.radio{display:flex;gap:6px;flex-wrap:wrap}
+.radio label{position:relative;border:1px solid var(--line);border-radius:10px;padding:6px 11px;background:var(--surface);cursor:pointer;font-size:13px}
+.radio input{position:absolute;opacity:0}
+.radio label:has(input:checked){border-color:var(--accent);background:var(--accent-soft);color:var(--accent);font-weight:500}
+.radio label:has(input:focus-visible){outline:2px solid var(--accent)}
+.sum{display:grid;grid-template-columns:1fr auto;gap:4px 12px}
+.sum .tot{font-weight:600;font-size:16px;border-top:1px solid var(--line);padding-top:6px;margin-top:2px}
+.bignum{font-weight:600;font-size:32px;line-height:1.2}
+
+.map h2{font-size:21px;margin-bottom:4px}
+.map ol{list-style:none;padding:0;margin:14px 0 0;display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:10px}
+.map li{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;display:flex;flex-direction:column;gap:6px}
+.map li b{font-size:13.5px}
+.map li p{font-size:12.5px;color:var(--ink2);flex:1}
+.map .n{display:inline-grid;place-items:center;width:22px;height:22px;border-radius:7px;background:var(--surface2);color:var(--ink2);font-size:11.5px;font-weight:600;margin-right:8px}
+
+/* 后台 */
+.adm{display:grid;grid-template-columns:200px minmax(0,1fr);gap:24px;align-items:start}
+.nav{display:flex;flex-direction:column;gap:2px;position:sticky;top:calc(env(safe-area-inset-top,0px) + 70px)}
+.nav button{border:0;background:transparent;text-align:left;padding:8px 12px;border-radius:10px;color:var(--ink2);font-weight:500}
+.nav button:hover{background:var(--surface2)}
+.nav button[aria-current="true"]{background:var(--accent-soft);color:var(--accent);font-weight:600}
+.nav .grp{font-size:11px;font-weight:500;color:var(--ink3);padding:12px 12px 4px}
+.main{min-width:0;display:flex;flex-direction:column;gap:16px}
+.ph{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:flex-end}
+.ph h2{font-size:22px} .ph p{color:var(--ink2);max-width:62ch}
+.tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(165px,1fr));gap:10px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px}
+.tile .v{font-weight:600;font-size:24px;line-height:1.3}
+.tile .v.neg{color:var(--bad)} .tile .v.pos{color:var(--good)}
+.tile .k{font-size:12.5px;color:var(--ink2)} .tile .s{font-size:12px;color:var(--ink3)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:16px;min-width:0}
+.panel>h3{font-size:15.5px;margin-bottom:10px}
+.two{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;align-items:start}
+.tw{overflow-x:auto;border:1px solid var(--line);border-radius:var(--r);background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:13px}
+th{font-size:11.5px;color:var(--ink3);text-align:left;font-weight:500;background:var(--surface2);white-space:nowrap}
+th,td{padding:9px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+tr:last-child td{border-bottom:0}
+td.num,th.num{text-align:right;white-space:nowrap}
+tfoot td{font-weight:600;background:var(--surface2)}
+.tabs{display:flex;gap:4px;overflow-x:auto;border-bottom:1px solid var(--line)}
+.tabs button{flex:none;border:0;background:none;padding:8px 12px;color:var(--ink2);font-weight:500;border-bottom:2px solid transparent;margin-bottom:-1px}
+.tabs button[aria-selected="true"]{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+.form{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;align-items:end}
+.matrix td,.matrix th{text-align:center} .matrix td:first-child,.matrix th:first-child{text-align:left;white-space:nowrap}
+.matrix input{width:17px;height:17px;accent-color:var(--accent-bg)}
+.tri{display:inline-flex;border:1px solid var(--line);border-radius:9px;overflow:hidden}
+.tri button{border:0;background:var(--surface);padding:4px 10px;font-size:12.5px;border-right:1px solid var(--line)}
+.tri button:last-child{border-right:0}
+.tri button[aria-pressed="true"][data-s="P"]{background:var(--good-soft);color:var(--good);font-weight:600}
+.tri button[aria-pressed="true"][data-s="A"]{background:var(--bad-soft);color:var(--bad);font-weight:600}
+.tri button[aria-pressed="true"][data-s="L"]{background:var(--warn-soft);color:var(--warn);font-weight:600}
+.thumb{width:40px;height:40px;border-radius:9px;object-fit:cover;display:block;background:var(--surface2)}
+.upl{position:relative;overflow:hidden;display:inline-block}
+.upl input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%}
+.jobs{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:12px;align-items:start}
+.job{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.kv{display:grid;grid-template-columns:auto minmax(0,1fr);gap:4px 12px;font-size:13px}
+.kv>div{display:contents} .kv dt{color:var(--ink3)} .kv dd{font-weight:500}
+.team{display:flex;flex-wrap:wrap;gap:6px}
+.chip{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);border-radius:99px;padding:3px 10px 3px 4px;font-size:12.5px;font-weight:500}
+.chip em{font-style:normal;font-size:11px;padding:1px 7px;border-radius:99px;background:var(--surface2);color:var(--ink2)}
+.chip em.m{background:var(--violet-soft);color:var(--violet)}
+.chip small{font-size:11px;color:var(--ink3);font-weight:400} .chip small.ok{color:var(--good)}
+.jform{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding-top:12px;border-top:1px solid var(--line)}
+.jform .wide{grid-column:1/-1}
+.legend{display:flex;gap:14px;font-size:12.5px;color:var(--ink2);margin-bottom:6px}
+.legend i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.chart{position:relative} .chart-sc{overflow-x:auto} .chart svg{display:block;width:100%;min-width:460px;height:auto}
+.chart text{font-family:var(--font);font-size:11px;fill:var(--ink3)}
+.chart .hit{fill:transparent} .chart .hit:hover{fill:var(--ink);fill-opacity:.05}
+.tip{position:absolute;pointer-events:none;background:var(--pri-bg);color:var(--pri-fg);border-radius:9px;padding:6px 10px;font-size:12px;white-space:nowrap;z-index:5;transform:translate(-50%,-100%)}
+.note{font-size:12.5px;color:var(--ink2);background:var(--surface2);border-radius:11px;padding:10px 13px}
+.lock{padding:36px 16px;text-align:center;color:var(--ink2)}
+
+.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 22px);transform:translateX(-50%);background:var(--pri-bg);color:var(--pri-fg);padding:10px 16px;border-radius:12px;z-index:60;max-width:calc(100vw - 32px);font-weight:500;box-shadow:0 6px 24px var(--shadow)}
+.modal{position:fixed;inset:0;background:var(--shade);z-index:50;display:grid;place-items:center;padding:16px}
+.modal>div{background:var(--surface);border-radius:18px;padding:20px;width:min(560px,100%);max-height:86vh;overflow:auto;display:flex;flex-direction:column;gap:12px}
+.modal textarea{width:100%;min-height:180px;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px}
+
+@media (max-width:860px){
+  .dev{grid-template-columns:minmax(0,1fr)}
+  .phone{height:min(760px,calc(100dvh - 130px));border-radius:20px}
+  .adm{grid-template-columns:minmax(0,1fr);gap:14px}
+  .nav{position:static;flex-direction:row;overflow-x:auto;gap:4px;padding-bottom:4px}
+  .nav button{flex:none;border:1px solid var(--line);background:var(--surface)}
+  .nav .grp{display:none}
+  .ph h2{font-size:20px}
+}
+@media (prefers-reduced-motion:no-preference){.toast{animation:up .2s ease-out}@keyframes up{from{opacity:0;transform:translate(-50%,8px)}}}
+</style>
+
+</head>
+<body>
+<div id="app"></div>
+<div id="toast" class="toast" hidden role="status"></div>
+<div id="modal" class="modal" hidden></div>
+
+<script>
+/* ============ 示范数据（全部为虚构，方便看整体流程） ============ */
+const TODAY='2026-10-11';
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const rm=n=>'RM '+Number(n).toLocaleString('en-MY',{maximumFractionDigits:0});
+const num=n=>Number(n).toLocaleString('en-MY');
+const WK=['日','一','二','三','四','五','六'];
+const dparts=d=>{const x=new Date(d+'T00:00:00');return{m:x.getMonth()+1,d:x.getDate(),w:WK[x.getDay()]}};
+const dshort=d=>{const p=dparts(d);return `${p.m}月${p.d}日（周${p.w}）`};
+const pad=n=>String(n).padStart(2,'0');
+const nowStr=()=>{const d=new Date();return `${TODAY} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`};
+
+const ROLES=['主席','副主席','文书','财政','总务','师傅','会员','IT Admin'];
+const PERMS=[
+ ['dash','查看总览'],['queue','问事叫号与预约'],['dispatch','安排服务派工'],['tasks','查看我的任务'],['events','发布活动与宝诞'],['products','商品上架与改价'],
+ ['orders','订单与送货安排'],['devotees','查看香客资料'],['register','代香客注册'],['finance','查看财政报告'],
+ ['ledgers','各类财务表'],['attendance','开会打卡记录'],['archive','文书与信件档案'],['export','下载报告'],
+ ['audit','查看操作记录'],['roles','设定职位与权限'],
+];
+const NAV=[
+ {grp:'日常'},['dash','总览','dash'],['queue','问事叫号','queue'],['dispatch','服务派工','dispatch'],['tasks','我的任务','tasks'],['events','活动发布','events'],
+ {grp:'买卖'},['products','商品与服务','products'],['orders','订单与送货','orders'],['devotees','香客资料','devotees'],
+ {grp:'财务'},['finance','财政报告','finance'],['ledgers','财务表','ledgers'],
+ {grp:'理事会'},['attendance','开会打卡','attendance'],['archive','文书档案','archive'],['roles','职位与权限','roles'],['audit','操作记录','audit'],
+];
+const P=(...k)=>Object.fromEntries(PERMS.map(([id])=>[id,k.includes(id)||k.includes('*')]));
+
+const S={
+ view:'devotee', dTab:'home', aTab:'dash', askTab:'walk', cat:'all', shopQ:'', shopTag:'全部', shopSort:'默认', theme:'light', sessionIncome:0, jobEdit:null, newPhoto:null, jobs:[], notifs:[], ledger:'offer', uid:'U007', meId:'D0001',
+ cart:{}, ck:{mode:'pickup',zone:'B',pay:'DuitNow QR'}, topic:'家宅平安', remindOn:true, reminded:false,
+ reserve:30, devQ:'', arcQ:'', arcYear:'全部', arcType:'全部', meeting:'M3', evForm:false, regForm:false, prodForm:false, arcForm:false,
+ users:[
+  {uid:'U001',name:'陈国华',role:'主席'},{uid:'U002',name:'林秀凤',role:'副主席'},{uid:'U003',name:'黄嘉敏',role:'文书'},
+  {uid:'U004',name:'李志强',role:'财政'},{uid:'U005',name:'张伟明',role:'总务'},{uid:'U006',name:'吴美玲',role:'会员'},
+  {uid:'U007',name:'郑家豪',role:'IT Admin'},{uid:'U008',name:'周文德',role:'会员'},
+  {uid:'U009',name:'陈师傅',role:'师傅'},{uid:'U010',name:'黄师傅',role:'师傅'},
+ ],
+ perms:{
+  '主席':P('dash','queue','dispatch','tasks','events','products','orders','devotees','register','finance','ledgers','attendance','archive','export','audit'),
+  '副主席':P('dash','queue','tasks','events','devotees','attendance','archive'),
+  '文书':P('dash','tasks','events','register','attendance','archive','export'),
+  '财政':P('dash','tasks','products','orders','finance','ledgers','export'),
+  '总务':P('dash','queue','dispatch','tasks','events','orders','devotees','register','export'),
+  '师傅':P('dash','tasks'),
+  '会员':P('dash','tasks'),
+  'IT Admin':P('*'),
+ },
+ queues:{
+  A:{realm:'t',altar:'天神坛',deity:'济公活佛',avg:6,last:22},
+  B:{realm:'y',altar:'阴神坛',deity:'大二爷伯',avg:8,last:13},
+ },
+ tickets:[], myTicket:null,
+ slots:[
+  {id:'SL1',date:'2026-10-14',time:'21:30',deity:'济公活佛',realm:'t',cap:3,booked:2,fee:88},
+  {id:'SL2',date:'2026-10-16',time:'22:00',deity:'大二爷伯',realm:'y',cap:3,booked:3,fee:108},
+  {id:'SL3',date:'2026-10-24',time:'21:30',deity:'济公活佛',realm:'t',cap:3,booked:0,fee:88},
+  {id:'SL4',date:'2026-10-30',time:'22:00',deity:'大二爷伯',realm:'y',cap:3,booked:1,fee:108},
+ ],
+ myAppts:[],
+ zones:{A:{name:'A 区（庙方圆 5 公里内）',fee:0,via:'本庙神料店送货'},B:{name:'B 区（5–15 公里）',fee:8,via:'Lalamove'},C:{name:'C 区（15 公里以上）',fee:15,via:'Grab 送货'}},
+ products:[],orders:[],leads:[],events:[],devotees:[],audit:[],meetings:[],att:{},docs:[],
+ L:{},
+};
+const me=()=>S.users.find(u=>u.uid===S.uid);
+const can=k=>!!S.perms[me().role][k];
+const dv=()=>S.devotees.find(d=>d.id===S.meId);
+
+/* 号码 */
+(function(){
+ const names=['蔡*明','刘*芳','许*伟','谢*珊','何*强','邱*莲','曾*华','赖*文','潘*仪','方*龙','苏*玲','叶*成','江*妹','余*豪','杜*娟','钟*安','田*心','彭*辉','卢*珍','魏*杰','沈*君','姚*福','范*兰','冯*海','郭*颖','洪*平','温*丽'];
+ for(let i=1;i<=22;i++)S.tickets.push({no:'A'+String(i).padStart(3,'0'),q:'A',name:names[i-1],topic:['事业','家宅平安','健康','财运','姻缘'][i%5],status:i<12?'done':i===12?'serving':'waiting'});
+ for(let i=1;i<=13;i++)S.tickets.push({no:'B'+String(i).padStart(3,'0'),q:'B',name:names[26-i],topic:['财运','补财库','还愿','家宅平安'][i%4],status:i<8?'done':i===8?'serving':'waiting'});
+})();
+
+/* 商品与服务：价格全部是示范价 */
+const CATS=[['goods','周边法宝'],['ritual','法事配套'],['lamp','点灯祈福'],['yin','阴坛服务'],['joss','神料预定'],['health','保健品'],['funeral','殡葬服务'],['more','其他服务']];
+const pp=(cat,name,price,desc,x={})=>deco({id:'P'+String(S.products.length+1).padStart(3,'0'),cat,name,price,desc,active:true,...x});
+S.products=[];
+[
+ ['goods','平安符（已过炉）',12,'随身或放车上，每年年尾送回庙里化掉'],
+ ['goods','开光手串',68,'主坛神明开光，附开光日期卡'],
+ ['goods','车挂平安牌',38,'出入平安，可加购新车净车祈福'],
+ ['goods','五路财神钱母袋',28,'每年初五补财气时换新'],
+ ['goods','本庙纪念 T 恤',45,'神诞游行与义工日穿着，尺寸 S–3XL'],
+ ['goods','神明金身（8 寸）',388,'含开光点眼，可加购到府安座'],
+ ['ritual','安神像（到府安座）',688,'择日、开光、安炉、上香一次完成；价格依神尊数量调整',{from:true}],
+ ['ritual','安祖先位',588,'写牌位、点主、安炉；含一年内一次回访',{from:true}],
+ ['ritual','净宅 · 去煞气',388,'新屋、二手屋、家宅不安时做；到府约 1 小时',{from:true}],
+ ['ritual','法索收煞',168,'法师持法索为个人收煞解厄，在庙里进行'],
+ ['ritual','收惊',38,'大人小孩皆可，带一件贴身衣物'],
+ ['ritual','祭改 · 补运',128,'运势低迷、犯小人时做，含替身与金纸'],
+ ['ritual','补财库',168,'含财库金与疏文，每年一次'],
+ ['ritual','新车净车祈福',88,'在庙前进行，附车挂平安牌一个'],
+ ['ritual','新居入伙 · 拜四角',388,'含供品清单与吉时，法师到府主持',{from:true}],
+ ['ritual','店面开张祈福',488,'择日、拜地主、请财神',{from:true}],
+ ['ritual','上契（认神明做契子）',108,'含契书与平安锁，每年神诞回庙谢恩'],
+ ['lamp','安太岁（一年）',60,'犯太岁生肖适用，年尾统一谢太岁'],
+ ['lamp','光明灯（一年）',100,'姓名上灯，初一十五诵经回向'],
+ ['lamp','文昌灯（一年）',80,'考生、升学、考试适用'],
+ ['lamp','财神灯（一年）',120,'生意人与业务员最常点'],
+ ['lamp','全家福灯（一年）',288,'一盏灯最多写 6 个名字'],
+ ['yin','大二爷伯补财库',168,'阴坛办事日进行，含供品'],
+ ['yin','拜有应公供品配套',58,'依本庙公布的拜有应公日期统一上供'],
+ ['yin','冤亲债主超度',288,'含疏文、莲花与往生钱'],
+ ['yin','祖先 / 亡亲超度莲位',150,'中元普度与清明法会期间安奉'],
+ ['yin','婴灵超度',388,'法师一对一办理，资料保密'],
+ ['yin','清明 / 中元代祭代烧',120,'人在外地也能尽孝，完成后传照片'],
+ ['joss','初一十五拜拜配套',28,'香、烛、金纸一套，够一次家中拜拜'],
+ ['joss','每月神料订阅（初一＋十五）',50,'每月两次自动送到家，随时可停',{sub:true}],
+ ['joss','拜天公配套',128,'初九拜天公整套，含甘蔗以外的纸料'],
+ ['joss','大二爷伯供品配套',48,'阴坛办事日当天现场可取'],
+ ['joss','中元普度配套',98,'家门口普度用，含普度旗'],
+ ['health','LiveOn 抗糖饮',168,'本集团保健品，按一般食品规格销售'],
+ ['health','MoveOn 关节保健',188,'含 UC-II、BonePep、Ovomet'],
+ ['health','BioLingzhi 灵芝',218,'本集团保健品'],
+ ['funeral','生前规划咨询',0,'由富贵集团 Nirvana 顾问讲解配套与付款方式',{lead:true}],
+ ['funeral','殡葬礼仪一条龙',0,'治丧、礼仪、出殡全程由富贵集团包办',{lead:true}],
+ ['funeral','骨灰位 / 福地',0,'富贵山庄各园区，由顾问带看',{lead:true}],
+ ['funeral','祖先牌位安奉',0,'由富贵集团安排安奉地点与管理',{lead:true}],
+ ['more','择日（结婚 / 入伙 / 开张）',88,'三个工作日内回复吉日吉时'],
+ ['more','八字批命',168,'文字报告，可预约讲解'],
+ ['more','住家 / 店面风水勘察',688,'到场勘察并给书面建议',{from:true}],
+ ['more','公司年度祈福（请神到府）',888,'开工日、年尾谢神适用',{from:true}],
+ ['more','神诞宴会赞助一桌',1000,'桌牌写公司或家族名字'],
+ ['more','护法会员（年费）',120,'神诞优先拿号，全年功德分 ×1.2'],
+].forEach(a=>S.products.push(pp(...a)));
+
+S.events=[
+ {date:'2026-10-11',lunar:'九月初二',time:'20:00',title:'济公活佛、大二爷伯办事',deity:'济公活佛 / 大二爷伯',type:'办事',by:'张伟明'},
+ {date:'2026-10-14',lunar:'九月初五',time:'20:00',title:'济公活佛办事',deity:'济公活佛',type:'办事',by:'张伟明'},
+ {date:'2026-10-16',lunar:'九月初七',time:'21:00',title:'大二爷伯办事（阴坛）',deity:'大二爷伯',type:'办事',by:'张伟明'},
+ {date:'2026-10-18',lunar:'九月初九',time:'19:00',title:'中坛元帅千秋宝诞',deity:'中坛元帅（哪吒）',type:'宝诞',by:'黄嘉敏'},
+ {date:'2026-10-24',lunar:'九月十五',time:'08:00',title:'十五拜拜 · 神料统一配送日',deity:'众神',type:'初一十五',by:'黄嘉敏'},
+ {date:'2026-10-28',lunar:'九月十九',time:'09:00',title:'观音菩萨出家纪念日',deity:'观音菩萨',type:'宝诞',by:'黄嘉敏'},
+ {date:'2026-10-31',lunar:'九月廿二',time:'21:30',title:'拜有应公',deity:'有应公',type:'拜有应公',by:'林秀凤'},
+ {date:'2026-11-09',lunar:'十月初一',time:'08:00',title:'初一拜拜 · 神料统一配送日',deity:'众神',type:'初一十五',by:'黄嘉敏'},
+ {date:'2026-11-23',lunar:'十月十五',time:'19:00',title:'下元节 · 水官大帝圣诞',deity:'水官大帝',type:'宝诞',by:'黄嘉敏'},
+];
+
+S.devotees=[
+ {id:'D0001',name:'陈美玲',ic:'8803••••5521',ic4:'5521',phone:'012-••• 4521',email:'meiling@example.com',addr:'A 区 · 花园路 12 号',points:1280,spend:2460,special:1,joined:'2023-03-12',
+  asks:[{d:'2026-09-23',deity:'济公活佛',topic:'事业'},{d:'2026-08-05',deity:'济公活佛',topic:'家宅平安'},{d:'2026-06-12',deity:'大二爷伯',topic:'财运'}],buys:['光明灯（一年）','补财库','初一十五拜拜配套 ×6','开光手串']},
+ {id:'D0002',name:'林志伟',ic:'7906••••1187',ic4:'1187',phone:'016-••• 8830',email:'zhiwei@example.com',addr:'B 区 · 工业园 3 路',points:3420,spend:8950,special:3,joined:'2021-07-02',
+  asks:[{d:'2026-10-02',deity:'大二爷伯',topic:'补财库'},{d:'2026-09-04',deity:'大二爷伯',topic:'财运'},{d:'2026-07-22',deity:'关圣帝君',topic:'事业'}],buys:['店面开张祈福','财神灯（一年）','神诞宴会赞助一桌','每月神料订阅']},
+ {id:'D0003',name:'黄丽珍',ic:'6511••••2046',ic4:'2046',phone:'019-••• 2210',email:'',addr:'A 区 · 新村 88 号',points:640,spend:1120,special:0,joined:'2024-01-20',
+  asks:[{d:'2026-09-16',deity:'观音菩萨',topic:'健康'}],buys:['全家福灯（一年）','每月神料订阅','MoveOn 关节保健']},
+ {id:'D0004',name:'张家铭',ic:'9502••••7734',ic4:'7734',phone:'011-•••• 9042',email:'jiaming@example.com',addr:'C 区 · 公寓 B-12-3',points:210,spend:356,special:0,joined:'2026-05-18',
+  asks:[{d:'2026-05-18',deity:'济公活佛',topic:'姻缘'}],buys:['新车净车祈福','文昌灯（一年）']},
+ {id:'D0005',name:'吴秀兰',ic:'5804••••3312',ic4:'3312',phone:'012-••• 7765',email:'',addr:'A 区 · 大街 45 号',points:2150,spend:5230,special:2,joined:'2020-11-08',
+  asks:[{d:'2026-09-30',deity:'大二爷伯',topic:'还愿'},{d:'2026-08-19',deity:'济公活佛',topic:'家宅平安'}],buys:['安祖先位','祖先 / 亡亲超度莲位','光明灯（一年）','中元普度配套']},
+ {id:'D0006',name:'李俊贤',ic:'8812••••6609',ic4:'6609',phone:'017-••• 3391',email:'junxian@example.com',addr:'B 区 · 商业城 21 号',points:5860,spend:16400,special:4,joined:'2019-09-01',
+  asks:[{d:'2026-10-07',deity:'济公活佛',topic:'事业'},{d:'2026-09-09',deity:'大二爷伯',topic:'补财库'}],buys:['安神像（到府安座）','公司年度祈福','报效神明法宝（金炉）','宴会标品（金龙）']},
+ {id:'D0007',name:'蔡慧敏',ic:'9207••••4158',ic4:'4158',phone:'018-••• 6027',email:'huimin@example.com',addr:'B 区 · 花园 6 巷 9 号',points:480,spend:790,special:0,joined:'2025-02-14',
+  asks:[{d:'2026-08-26',deity:'济公活佛',topic:'健康'}],buys:['收惊','平安符 ×3','LiveOn 抗糖饮']},
+ {id:'D0008',name:'刘国栋',ic:'7001••••8823',ic4:'8823',phone:'013-••• 1458',email:'',addr:'A 区 · 渔村路 7 号',points:980,spend:1875,special:1,joined:'2022-06-30',
+  asks:[{d:'2026-09-18',deity:'大二爷伯',topic:'财运'}],buys:['大二爷伯补财库','拜有应公供品配套','安太岁（一年）']},
+];
+/* 功德分只增不减；积分 = 功德分 − 已兑换 */
+{const USED={D0001:500,D0002:1500,D0005:1500,D0006:3000,D0008:500};S.devotees.forEach(d=>{d.credit=d.points-(USED[d.id]||0);d.redeems=[]});S.devotees[0].redeems=[{d:'2026-07-18',item:'平安符（已过炉）',cost:500}]}
+S.orders=[
+ {id:'OD-1042',date:'2026-10-10 19:22',who:'林志伟',items:'每月神料订阅（初一＋十五）×1',total:58,mode:'送货',zone:'B',via:'Lalamove',fee:8,pay:'FPX',status:'待配送'},
+ {id:'OD-1041',date:'2026-10-10 14:05',who:'黄丽珍',items:'初一十五拜拜配套 ×2',total:56,mode:'送货',zone:'A',via:'本庙神料店送货',fee:0,pay:'DuitNow QR',status:'待配送'},
+ {id:'OD-1040',date:'2026-10-09 21:40',who:'李俊贤',items:'公司年度祈福（请神到府）×1',total:888,mode:'到府服务',zone:'B',via:'—',fee:0,pay:'银行转账',status:'已排期'},
+ {id:'OD-1039',date:'2026-10-08 11:13',who:'蔡慧敏',items:'LiveOn 抗糖饮 ×1，平安符 ×1',total:195,mode:'送货',zone:'C',via:'Grab 送货',fee:15,pay:'TnG eWallet',status:'已送达'},
+ {id:'OD-1038',date:'2026-10-07 20:51',who:'刘国栋',items:'拜有应公供品配套 ×1',total:58,mode:'到庙自取',zone:'—',via:'—',fee:0,pay:'现金',status:'已完成'},
+];
+S.leads=[{date:'2026-10-06',who:'吴秀兰',phone:'012-••• 7765',item:'祖先牌位安奉',status:'富贵顾问已联络'}];
+
+S.audit=[
+ {ts:'2026-10-11 09:14:02',uid:'U004',nameAt:'李志强',action:'下载',target:'财政报告',detail:'财政报告_2026.csv'},
+ {ts:'2026-10-10 22:31:47',uid:'U004',nameAt:'李志强',action:'修改',target:'商品 · 补财库',detail:'卖价 RM 148 → RM 168'},
+ {ts:'2026-10-10 21:02:10',uid:'U005',nameAt:'张伟明',action:'叫号',target:'天神坛',detail:'叫号 A011'},
+ {ts:'2026-10-09 16:40:33',uid:'U003',nameAt:'黄嘉敏',action:'新增',target:'开会打卡',detail:'10 月常月会议，出席 6 / 缺席 1 / 请假 1'},
+ {ts:'2026-10-08 10:05:19',uid:'U007',nameAt:'郑家豪',action:'修改',target:'权限 · 文书',detail:'开启「下载报告」'},
+ {ts:'2026-10-05 15:22:08',uid:'U003',nameAt:'黄嘉敏',action:'修改',target:'个人资料',detail:'姓名 黄佳敏 → 黄嘉敏'},
+ {ts:'2026-10-03 11:48:51',uid:'U003',nameAt:'黄佳敏',action:'下载',target:'香客资料报告',detail:'香客资料_2026-10-03.csv（8 笔）'},
+ {ts:'2026-10-02 20:15:30',uid:'U001',nameAt:'陈国华',action:'查看',target:'财政报告',detail:'打开 2026 年财政报告'},
+];
+const log=(action,target,detail)=>S.audit.unshift({ts:nowStr(),uid:S.uid,nameAt:me().name,action,target,detail});
+
+S.meetings=[
+ {id:'M1',date:'2026-08-09',title:'8 月常月会议（中元普度筹备）'},
+ {id:'M2',date:'2026-09-13',title:'9 月常月会议'},
+ {id:'M3',date:'2026-10-04',title:'10 月常月会议（年尾谢神与宴会）'},
+];
+S.att={M1:{U001:'P',U002:'P',U003:'P',U004:'P',U005:'L',U006:'P',U007:'P',U008:'A'},M2:{U001:'P',U002:'A',U003:'P',U004:'P',U005:'P',U006:'P',U007:'L',U008:'P'},M3:{U001:'P',U002:'P',U003:'P',U004:'P',U005:'P',U006:'L',U007:'P',U008:'A'}};
+S.docs=[
+ {year:2026,date:'2026-10-04',type:'会议记录',title:'10 月常月会议记录',ref:'MIN-2026-10',by:'黄嘉敏'},
+ {year:2026,date:'2026-09-20',type:'发出信件',title:'致市议会：神诞游行路线申请',ref:'OUT-2026-014',by:'黄嘉敏'},
+ {year:2026,date:'2026-09-13',type:'会议记录',title:'9 月常月会议记录',ref:'MIN-2026-09',by:'黄嘉敏'},
+ {year:2026,date:'2026-08-28',type:'收到信件',title:'警局：中元晚宴集会准证批文',ref:'IN-2026-021',by:'黄嘉敏'},
+ {year:2026,date:'2026-03-15',type:'官方文件',title:'社团注册局年度报告呈交回执',ref:'ROS-2026',by:'陈国华'},
+ {year:2025,date:'2025-12-14',type:'会议记录',title:'2025 年度会员大会记录',ref:'AGM-2025',by:'黄嘉敏'},
+ {year:2025,date:'2025-11-02',type:'通告',title:'年尾谢神与谢太岁通告',ref:'NOT-2025-009',by:'黄嘉敏'},
+ {year:2025,date:'2025-06-18',type:'合约',title:'神料供应合约（两年）',ref:'CON-2025-002',by:'李志强'},
+ {year:2024,date:'2024-12-08',type:'会议记录',title:'2024 年度会员大会记录',ref:'AGM-2024',by:'黄嘉敏'},
+ {year:2024,date:'2024-04-21',type:'发出信件',title:'致富贵集团：合作意向书',ref:'OUT-2024-006',by:'陈国华'},
+ {year:2023,date:'2023-07-30',type:'官方文件',title:'庙地地契与信托人名单副本',ref:'DOC-2023-001',by:'陈国华'},
+];
+
+/* 服务派工：谁去、几号几点、去哪位香客的地址、做什么 */
+S.jobs=[
+ {id:'J-0036',svc:'净宅 · 去煞气',dev:'张家铭',addr:'C 区 · 公寓 B-12-3',place:'到府',date:'2026-10-15',time:'20:00',master:null,crew:[],status:'待派工',note:'香客说搬进去后家人睡不好',acks:{}},
+ {id:'J-0035',svc:'净宅 · 去煞气',dev:'陈美玲',addr:'A 区 · 花园路 12 号',place:'到府',date:'2026-10-20',time:'20:00',master:'U009',crew:['U006','U008'],status:'已派工',note:'',acks:{U009:true}},
+ {id:'J-0034',svc:'新居入伙 · 拜四角',dev:'蔡慧敏',addr:'B 区 · 花园 6 巷 9 号',place:'到府',date:'2026-10-18',time:'11:00',master:null,crew:[],status:'待派工',note:'香客要求上午办',acks:{}},
+ {id:'J-0033',svc:'公司年度祈福（请神到府）',dev:'李俊贤',addr:'B 区 · 商业城 21 号',place:'到府',date:'2026-10-17',time:'09:00',master:'U010',crew:['U005','U006'],status:'已派工',note:'需带神轿与香炉',acks:{U010:true,U005:true}},
+ {id:'J-0032',svc:'法索收煞',dev:'刘国栋',addr:'本庙阴神坛',place:'庙里',date:'2026-10-16',time:'21:30',master:'U009',crew:['U008'],status:'已派工',note:'',acks:{}},
+ {id:'J-0031',svc:'安神像（到府安座）',dev:'李俊贤',addr:'B 区 · 商业城 21 号',place:'到府',date:'2026-10-13',time:'10:30',master:'U009',crew:['U006','U008'],status:'已派工',note:'三尊神像，带开光用品',acks:{U009:true,U006:true,U008:true}},
+ {id:'J-0030',svc:'安祖先位',dev:'吴秀兰',addr:'A 区 · 大街 45 号',place:'到府',date:'2026-10-08',time:'10:00',master:'U010',crew:['U006'],status:'已完成',note:'',acks:{U010:true,U006:true}},
+];
+S.notifs=[];
+S.jobs.filter(j=>j.status==='已派工').forEach(j=>jobTeam(j).forEach(uid=>S.notifs.push({uid,ts:'2026-10-10 18:30',job:j.id,read:!!j.acks[uid],text:notifText(j,'新任务')})));
+
+
+/* 财务表 */
+S.L={
+ offer:{name:'报效法宝',cols:['报效人','法宝','供奉神明','金额','付款状态','付款日期时间','方式','经手人'],money:3,rows:[
+  ['李俊贤','金炉一座','玄天上帝',3800,'已付','2026-09-28 20:14','银行转账','李志强'],
+  ['林志伟','龙袍一件','济公活佛',1280,'已付','2026-09-12 21:03','DuitNow QR','李志强'],
+  ['吴秀兰','莲花灯一对','观音菩萨',680,'未付','','',''],
+  ['刘国栋','黑令旗一面','大二爷伯',480,'已付','2026-08-21 22:40','现金','张伟明'],
+  ['蔡慧敏','供桌桌围','中坛元帅',360,'未付','','',''],
+ ]},
+ auction:{name:'宴会标品',cols:['宴会','标品','中标人','中标价','付款方式','已付','余额','下期到期','状态'],money:3,rows:[
+  ['2026 中元晚宴','金龙（福品第 1 号）','李俊贤',8888,'分 4 期',4444,4444,'2026-11-15','分期中'],
+  ['2026 中元晚宴','发财炭','林志伟',3888,'一次性',3888,0,'','已付清'],
+  ['2026 中元晚宴','平安米（100 公斤）','吴秀兰',1688,'分 2 期',844,844,'2026-10-20','分期中'],
+  ['2026 中元晚宴','神明令旗','刘国栋',988,'一次性',0,988,'2026-09-30','逾期'],
+  ['2026 玄天上帝诞晚宴','头炉','陈美玲',1288,'一次性',1288,0,'','已付清'],
+ ]},
+ donate:{name:'香油乐捐',cols:['日期','捐款人','项目','金额','方式','收据号'],money:3,rows:[
+  ['2026-10-10','无名氏','香油钱',200,'香油箱','R-2026-0412'],
+  ['2026-10-08','林志伟','建庙基金',1000,'银行转账','R-2026-0411'],
+  ['2026-10-04','黄丽珍','香油钱',50,'DuitNow QR','R-2026-0410'],
+  ['2026-10-01','李俊贤','慈善米粮基金',500,'FPX','R-2026-0409'],
+ ]},
+ lamp:{name:'点灯与太岁',cols:['年份','姓名','灯种','金额','到期日','续约'],money:3,rows:[
+  ['2026','陈美玲','光明灯',100,'2027-02-05','未到期'],
+  ['2026','林志伟','财神灯',120,'2027-02-05','未到期'],
+  ['2026','黄丽珍','全家福灯',288,'2027-02-05','未到期'],
+  ['2026','刘国栋','安太岁',60,'2027-02-05','未到期'],
+  ['2025','张家铭','文昌灯',80,'2026-02-16','已过期 · 待跟进'],
+ ]},
+ sponsor:{name:'法会赞助',cols:['法会','赞助人','名分','金额','付款状态','付款日期时间','经手人'],money:3,rows:[
+  ['2026 中元普度','李俊贤','正炉主',3000,'已付','2026-08-10 20:30','李志强'],
+  ['2026 中元普度','林志伟','副炉主',1500,'已付','2026-08-11 21:12','李志强'],
+  ['2026 中元普度','吴秀兰','协理',500,'已付','2026-08-14 19:55','张伟明'],
+  ['2026 年尾谢神','刘国栋','协理',500,'未付','',''],
+ ]},
+ payout:{name:'支出凭单',cols:['日期','项目','类别','金额','收款方','批准人','单据号'],money:3,rows:[
+  ['2026-10-09','金纸与香烛进货','神料进货',2860,'神料批发商','陈国华','PV-2026-118'],
+  ['2026-10-05','水电费（9 月）','水电租金',640,'TNB / 水务局','李志强','PV-2026-117'],
+  ['2026-10-03','乩童与桌头津贴','人事津贴',1800,'办事人员','陈国华','PV-2026-116'],
+  ['2026-10-02','送货费结算','送货',412,'Lalamove / Grab','李志强','PV-2026-115'],
+  ['2026-10-01','屋顶漏水维修','维修杂费',388,'维修师傅','陈国华','PV-2026-114'],
+ ]},
+};
+const LEDGER_ORDER=['offer','auction','donate','lamp','sponsor','payout','due'];
+
+/* 财政：2026 年 1–10 月（10 月截至今天） */
+const MONTHS=['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月'];
+const INC=[18400,42600,21500,19800,17200,23900,20100,61800,24300,9800];
+const EXP=[15200,21800,14900,16100,19500,15800,16400,38200,15900,6100];
+const HELPED=[310,540,335,320,298,360,342,610,371,142];
+const INC_CAT=[['香油乐捐',.2],['法事配套',.24],['点灯与太岁',.13],['商品与神料',.17],['宴会标品与赞助',.19],['保健品',.07]];
+const EXP_CAT=[['神料进货',.3],['法事开销',.18],['宴会开销',.16],['人事津贴',.17],['水电租金',.09],['维修杂费',.1]];
+
+
+/* ============ 工具 ============ */
+let toastT;
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.hidden=false;clearTimeout(toastT);toastT=setTimeout(()=>t.hidden=true,3200)}
+const dlP=(()=>{try{return window.claude&&window.claude.use?window.claude.use('downloads'):Promise.resolve(null)}catch(e){return Promise.resolve(null)}})();
+function toCSV(rows){return '﻿'+rows.map(r=>r.map(c=>{c=String(c??'');return /[",\n]/.test(c)?'"'+c.replace(/"/g,'""')+'"':c}).join(',')).join('\r\n')}
+async function download(filename,rows,label){
+ if(!can('export')){toast('你的职位没有「下载报告」权限');return}
+ log('下载',label,`${filename}（${rows.length-1} 笔）`);
+ const csv=toCSV(rows);let dl=null;try{dl=await dlP}catch(e){}
+ if(dl){try{await dl.save({filename,data:csv});toast('已下载 '+filename)}catch(e){toast(e&&e.code==='declined'?'已取消下载，操作记录里仍会留下这次动作':'这个画面暂时不能下载，改用复制');if(!e||e.code!=='declined')showCSV(filename,csv)}}
+ else if(!window.claude){try{const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'}));a.download=filename;document.body.appendChild(a);a.click();a.remove();toast('已下载 '+filename)}catch(e){showCSV(filename,csv)}}
+ else showCSV(filename,csv);
+ if(S.view==='admin')render();
+}
+function showCSV(filename,csv){
+ const m=document.getElementById('modal');
+ m.innerHTML=`<div role="dialog" aria-label="报告内容"><h3>${esc(filename)}</h3><p class="small muted">这个预览画面不能直接存档，内容可以复制后贴进 Excel。正式版会直接下载 Excel / PDF。</p><textarea id="csvbox" readonly>${esc(csv.slice(1))}</textarea><div class="row"><button class="btn pri" data-act="copycsv">复制内容</button><button class="btn" data-act="closemodal">关闭</button></div></div>`;
+ m.hidden=false;
+}
+function waiting(q){return S.tickets.filter(t=>t.q===q&&t.status==='waiting')}
+function serving(q){return S.tickets.find(t=>t.q===q&&t.status==='serving')}
+function crowd(){const n=waiting('A').length+waiting('B').length;return n<10?{l:1,t:'宽松',c:'good',n}:n<=25?{l:2,t:'普通',c:'warn',n}:{l:3,t:'拥挤',c:'bad',n}}
+function myAhead(){if(!S.myTicket)return null;const t=S.tickets.find(x=>x.no===S.myTicket);if(!t)return null;const w=waiting(t.q);const i=w.findIndex(x=>x.no===t.no);const q=S.queues[t.q];return{t,q,ahead:i<0?0:i,eta:i<0?0:(i+1)*q.avg,status:t.status}}
+function callNext(q,silent){
+ const cur=serving(q);if(cur)cur.status='done';
+ const nx=waiting(q)[0];if(nx)nx.status='serving';
+ if(!silent)log('叫号',S.queues[q].altar,nx?'叫号 '+nx.no:'队伍已清空');
+ const a=myAhead();
+ if(a&&a.status==='waiting'&&a.eta<=15&&S.remindOn&&!S.reminded){S.reminded=true;toast(`提醒：${a.t.no} 大约 ${a.eta} 分钟后轮到你，请回到庙里`)}
+ if(nx&&nx.no===S.myTicket){toast(`${a.t.no} 轮到你了，请到${a.q.altar}`)}
+ return nx;
+}
+const helpedTotal=()=>18240+HELPED.reduce((a,b)=>a+b,0)+S.tickets.filter(t=>t.status==='done').length-18;
+const cartItems=()=>Object.entries(S.cart).map(([id,q])=>({p:S.products.find(p=>p.id===id),q})).filter(x=>x.p&&x.q>0);
+const cartSub=()=>cartItems().reduce((a,x)=>a+x.p.price*x.q,0);
+const shipFee=()=>S.ck.mode==='pickup'?0:S.zones[S.ck.zone].fee;
+const REWARDS=[[500,'平安符（已过炉）'],[1000,'全家福灯（一年）'],[1500,'开光手串'],[3000,'神明令旗法宝'],[6000,'开光神明金身（8 寸）']];
+const realmOf=d=>/大二爷伯|城隍|有应公|地藏/.test(d)?'y':'t';
+
+/* ============ 标签、派工的小工具 ============ */
+function deco(p){
+ const HOT=['光明灯（一年）','初一十五拜拜配套','补财库','平安符（已过炉）','收惊'],NEW=['全家福灯（一年）','本庙纪念 T 恤','每月神料订阅（初一＋十五）'],LTD=['神明金身（8 寸）','神诞宴会赞助一桌'];
+ p.label=p.label||(HOT.includes(p.name)?'热卖':NEW.includes(p.name)?'新品':LTD.includes(p.name)?'限量':'');
+ const t=[];
+ if(p.cat==='yin')t.push('阴神坛');else if(p.cat==='ritual'||p.cat==='lamp')t.push('天神坛');
+ if(['goods','joss','health'].includes(p.cat))t.push('实物');
+ if(p.from)t.push('到府服务');else if(p.cat==='ritual'||p.cat==='yin')t.push('在庙办理');
+ if(p.sub)t.push('订阅');
+ if(p.cat==='lamp')t.push('一年有效');
+ if(p.cat==='joss')t.push('A 区免运');
+ if(p.cat==='funeral')t.push('富贵集团');
+ if(p.cat==='more'&&!p.from)t.push('预约制');
+ if(p.cat==='ritual')t.push(p.from?'陈师傅主理':'黄师傅主理');
+ if(p.cat==='yin')t.push('陈师傅主理');
+ p.tags=t;return p;
+}
+function tagHtml(t){const c=t==='天神坛'?'t-amber':t==='阴神坛'?'t-slate':t==='到府服务'?'t-info':/主理/.test(t)?'t-violet':/免运|订阅/.test(t)?'t-good':'';return `<span class="tag ${c}">${esc(t)}</span>`}
+function uname(id){const u=S.users.find(x=>x.uid===id);return u?u.name:'—'}
+function committee(){return S.users.filter(u=>u.role!=='师傅')}
+function jobWhen(j){return j.date?`${dshort(j.date)} ${j.time}`:'日期待定'}
+function jobTeam(j){return [j.master,...j.crew].filter(Boolean)}
+function notifText(j,kind){return `${kind}：${jobWhen(j)}${j.place==='到府'?' 到 '+j.addr:' 在'+j.addr}，为 ${j.dev} 做「${j.svc}」`}
+function notify(j,uids,kind){uids.forEach(uid=>S.notifs.unshift({uid,ts:nowStr().slice(0,16),job:j.id,read:false,text:notifText(j,kind)}))}
+const PICON={
+ goods:'<path d="M5 8h14l-1 12H6L5 8z"/><path d="M9 8V6a3 3 0 016 0v2"/>',
+ ritual:'<path d="M6 16v-5a6 6 0 0112 0v5l1.5 2h-15z"/><path d="M10 20a2 2 0 004 0"/>',
+ lamp:'<path d="M12 3c3 3.5 5 6 5 9a5 5 0 01-10 0c0-3 2-5.5 5-9z"/><path d="M12 13v4"/>',
+ yin:'<path d="M19 14.5A8 8 0 019.5 5a8 8 0 109.5 9.5z"/>',
+ joss:'<path d="M8 20V8M12 20V5M16 20V8"/><path d="M6 20h12"/>',
+ health:'<rect x="5" y="5" width="14" height="14" rx="4"/><path d="M12 9v6M9 12h6"/>',
+ funeral:'<path d="M12 20s-7-4.5-7-10a4 4 0 017-2.5A4 4 0 0119 10c0 5.5-7 10-7 10z"/>',
+ more:'<circle cx="12" cy="12" r="8"/><path d="M15 9l-2 4-4 2 2-4z"/>',
+};
+const LCLS={热卖:'hot',新品:'new',限量:'ltd'};
+
+
+/* ============ 香客端 ============ */
+const ICON={
+ home:'<path d="M4 11l8-7 8 7"/><path d="M6 10v9h12v-9"/><path d="M10 19v-5h4v5"/>',
+ ask:'<rect x="5" y="3" width="14" height="18" rx="1.5"/><path d="M9 8h6M9 12h6M9 16h3"/>',
+ shop:'<path d="M5 8h14l-1 12H6L5 8z"/><path d="M9 8V6a3 3 0 016 0v2"/>',
+ cal:'<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 10h16M8 3v4M16 3v4"/>',
+ me:'<circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/>',
+};
+function vDevotee(){
+ const tabs=[['home','首页'],['ask','问事'],['shop','商城'],['cal','活动'],['me','我的']];
+ const a=myAhead();const near=a&&a.status==='waiting'&&a.eta<=15;
+ const body={home:dHome,ask:dAsk,shop:dShop,cart:dCart,cal:dCal,me:dMe}[S.dTab]();
+ const n=cartItems().reduce((s,x)=>s+x.q,0);
+ return `<div class="dev">
+  <div class="phone" aria-label="香客端手机画面">
+   <div class="ph-head"><div><div class="plaque">本庙</div><small>天神坛 · 阴神坛</small></div>
+    <button class="bell" data-act="dtab" data-v="ask" aria-label="我的号码">${a&&a.status!=='done'?esc(a.t.no):'未拿号'}${near||(a&&a.status==='serving')?'<i></i>':''}</button></div>
+   <div class="ph-body" id="phbody">${body}</div>
+   ${S.dTab==='shop'&&n?`<div class="cartbar"><span>购物车 ${n} 件 · <b>${rm(cartSub())}</b></span><button data-act="dtab" data-v="cart">去结账</button></div>`:''}
+   <nav class="ph-tabs">${tabs.map(([k,t])=>`<button data-act="dtab" data-v="${k}" aria-current="${S.dTab===k||(k==='shop'&&S.dTab==='cart')}"><svg viewBox="0 0 24 24" aria-hidden="true">${ICON[k]}</svg>${t}</button>`).join('')}</nav>
+  </div>
+  ${vMap()}
+ </div>`;
+}
+function vMap(){
+ const M=[
+  [1,'问事拿号与特别预约','人潮指示、现场拿号、轮到前 15 分钟提醒；特别预约每场限 3 位。','dtab','ask','看拿号'],
+  [2,'商城：商品卡片、筛选、标签','每个项目一张卡片，有照片、价格、加减购物车；可按分类、标签、关键字筛选和排序。','cat','all','看商城'],
+  [3,'总览、功德分与积分、活动发布','累计帮助香客人次；功德分只增不减，积分用来换法宝；宝诞与办事日程。','atab','dash','看总览'],
+  [4,'财政报告','进账、支出、盈利、亏损月份、留作运营费的百分比。只有获授权职位可看。','atab','finance','看财政'],
+  [5,'职位与权限','主席到会员，加上师傅，IT Admin 勾选每个职位能用的功能。','atab','roles','看权限'],
+  [6,'文书档案','历年会议记录、来往信件、官方文件，按年份与类型查找。','atab','archive','看档案'],
+  [7,'财务表（每类一个分页）','报效法宝、宴会标品、香油乐捐、点灯太岁、法会赞助、支出凭单、应收追踪。','atab','ledgers','看财务表'],
+  [8,'操作记录','谁改动、谁下载、几点做的，连改名前的姓名都留着。','atab','audit','看记录'],
+  [9,'香客资料报告','姓名、IC、电话、地址、买过什么、问过哪位神明、功德分。','atab','devotees','看香客资料'],
+  [10,'香客会员与代注册','香客自己的会员卡；不会用的，报名字或 IC 后四位由管理员代办。','dtab','me','看会员卡'],
+  [11,'WhatsApp 社群与负责人','首页和「我的」各有一个直达按钮。','dtab','home','看首页'],
+  [12,'服务派工与通知','哪位师傅主理、哪几位会员同行、几号几点去哪位香客的地址。把登入身份换成陈师傅，可以看到他收到的通知。','atab','dispatch','看派工'],
+ ];
+ return `<section class="map"><h2>功能放在哪里</h2><p class="muted">左边是香客手机上看到的画面，可以直接点。每一项点「看…」会跳到对应画面。资料全部是示范用的假资料。</p>
+ <ol>${M.map(m=>`<li><b><span class="n">${m[0]}</span>${m[1]}</b><p>${m[2]}</p><div><button class="btn sm" data-act="${m[3]}" data-v="${m[4]}">${m[5]}</button></div></li>`).join('')}</ol></section>`;
+}
+function ticketCard(a){
+ if(a.status==='serving')return `<div class="ticket now"><div class="small">${a.q.altar} · ${esc(a.q.deity)}</div><div class="no">${a.t.no}</div><b>轮到你了，请到${a.q.altar}</b></div>`;
+ if(a.status==='done')return `<div class="card"><b>${a.t.no} 已办理完成</b><p class="small muted">功德分和积分各 +10 已入账。需要再问事可以重新拿号。</p><div class="row" style="margin-top:8px"><button class="btn sm" data-act="clearticket">好的</button></div></div>`;
+ return `<div class="ticket"><div class="small">${a.q.altar} · ${esc(a.q.deity)} · ${esc(S.topic)}</div><div class="no">${a.t.no}</div>
+  <dl><div><dt>前面还有</dt><dd>${a.ahead} 位</dd></div><div><dt>预计等候</dt><dd>约 ${a.eta} 分钟</dd></div></dl></div>`;
+}
+function dHome(){
+ const c=crowd(),a=myAhead(),d=dv();
+ const up=S.events.filter(e=>e.date>=TODAY).slice(0,3);
+ const qi=(act,v,ic,t)=>`<button data-act="${act}" data-v="${v}"><span class="qi"><svg viewBox="0 0 24 24" aria-hidden="true">${ic}</svg></span>${t}</button>`;
+ return `
+ ${a&&a.status==='waiting'&&a.eta<=15?`<div class="alert" role="alert"><div><b>快轮到你了</b><br>${a.t.no} 大约 ${a.eta} 分钟后办理，请现在回到${a.q.altar}。</div></div>`:''}
+ <div class="card"><div class="row"><h3 class="grow" style="margin:0">今日人潮</h3><span class="pill ${c.c}">${c.t}</span></div>
+  <div class="meter" data-l="${c.l}"><i></i><i></i><i></i></div>
+  <p class="small muted">两坛目前共 ${c.n} 人等候。天神坛约等 ${waiting('A').length*S.queues.A.avg} 分钟，阴神坛约等 ${waiting('B').length*S.queues.B.avg} 分钟。</p></div>
+ ${a&&a.status!=='done'?ticketCard(a):''}
+ <div class="quick">
+  ${qi('dtab','ask',ICON.ask,'拿号问事')}${qi('asktab','appt',ICON.cal,'特别预约')}${qi('cat','joss',PICON.joss,'预定神料')}
+  ${qi('cat','ritual',PICON.ritual,'法事配套')}${qi('cat','lamp',PICON.lamp,'点灯祈福')}${qi('dtab','me',ICON.me,'我的功德分')}
+ </div>
+ <div class="sec-h"><h3>接下来的活动</h3><button class="linkbtn" data-act="dtab" data-v="cal">全部日程</button></div>
+ <div class="card stack">${up.map(evRow).join('')}</div>
+ <div class="card" style="text-align:center"><div class="label">本庙至今帮助香客</div><div class="bignum">${num(helpedTotal())} <span style="font-size:14px;font-weight:500">人次</span></div><p class="small muted">${esc(d.name)}，你来问事 ${d.asks.length} 次</p></div>
+ <div class="row"><button class="btn wa grow" data-act="wa">加入 WhatsApp 社群</button><button class="btn grow" data-act="contact">联络负责人</button></div>`;
+}
+function evRow(e){const p=dparts(e.date);const cls={办事:'mute',宝诞:'gold',拜有应公:'yin',初一十五:'good'}[e.type]||'mute';
+ return `<div class="ev"><div class="d"><b>${p.d}</b><span>${p.m}月 周${p.w}</span></div><div class="grow"><b>${esc(e.title)}</b><div class="small muted">农历${esc(e.lunar)} · ${esc(e.time)} · ${esc(e.deity)}</div></div><span class="pill ${cls}">${esc(e.type)}</span></div>`}
+function dAsk(){
+ const a=myAhead();
+ const seg=`<div class="seg" style="align-self:flex-start"><button data-act="asktab" data-v="walk" aria-pressed="${S.askTab==='walk'}">现场拿号</button><button data-act="asktab" data-v="appt" aria-pressed="${S.askTab==='appt'}">特别预约</button></div>`;
+ if(S.askTab==='appt'){
+  return seg+`<p class="small muted">特别预约是一对一办理，每场只开 3 个名额，约 30 分钟。约满就不能再加。</p>
+  <div class="card">${S.slots.map(s=>{const left=s.cap-s.booked,mine=S.myAppts.includes(s.id);
+   return `<div class="item"><div class="grow"><div class="row" style="gap:6px"><span class="realm ${s.realm}">${s.realm==='t'?'天神':'阴神'}</span><b>${esc(s.deity)}</b></div><p>${dshort(s.date)} ${s.time} · ${rm(s.fee)}</p>
+   <span class="pill ${mine?'good':left===0?'bad':left===1?'warn':'mute'}">${mine?'你已预约':left===0?'名额已满':'剩 '+left+' / '+s.cap+' 位'}</span></div>
+   <button class="btn sm ${mine||left===0?'':'pri'}" data-act="book" data-v="${s.id}" ${mine||left===0?'disabled':''}>${mine?'已预约':'预约'}</button></div>`}).join('')}</div>
+  <p class="small muted">预约成功后，办理前一天和当天各提醒一次。</p>`;
+ }
+ const cards=['A','B'].map(k=>{const q=S.queues[k],w=waiting(k).length,sv=serving(k);
+  return `<div class="card"><div class="qcard"><div class="grow"><div class="row" style="gap:6px"><span class="realm ${q.realm}">${q.altar}</span><b>${esc(q.deity)}</b></div>
+   <p class="small muted" style="margin-top:4px">等候 ${w} 人 · 约 ${w*q.avg} 分钟</p></div>
+   <div class="right"><div class="label">正在办理</div><div class="now">${sv?sv.no:'—'}</div></div></div>
+   ${!a||a.status==='done'?`<div class="row" style="margin-top:10px"><button class="btn pri grow" data-act="take" data-v="${k}">拿号问${esc(q.deity)}</button></div>`:''}</div>`}).join('');
+ const c=crowd();
+ return seg+`<div class="row"><span class="pill ${c.c}">今日${c.t}</span><span class="small muted">共 ${c.n} 人等候</span></div>
+ ${a&&a.status==='done'?ticketCard(a):''}
+ ${a&&a.status!=='done'?ticketCard(a)+(a.status==='waiting'?`
+  <div class="card"><label class="row" style="cursor:pointer"><input type="checkbox" id="remind" data-act="remind" ${S.remindOn?'checked':''} style="width:18px;height:18px;accent-color:var(--accent-bg)"><span class="grow"><b>轮到前 15 分钟提醒我</b><br><span class="small muted">手机通知加 WhatsApp 讯息，人可以先去吃饭。</span></span></label></div>
+  <div class="row"><button class="btn sm" data-act="simcall">示范：快转叫号</button><button class="btn sm" data-act="cancelticket">取消号码</button></div>`:`<div class="row"><button class="btn sm" data-act="simcall">示范：办理完成</button></div>`):`
+  <div class="field"><span>想问的事项</span><select id="topic" data-act="topic">${['家宅平安','事业','财运','健康','姻缘','学业','还愿','其他'].map(t=>`<option ${S.topic===t?'selected':''}>${t}</option>`).join('')}</select></div>`}
+ ${cards}`;
+}
+function shopList(){
+ const q=S.shopQ.trim().toLowerCase();
+ let l=S.products.filter(p=>p.active&&(S.cat==='all'||p.cat===S.cat)&&(S.shopTag==='全部'||p.label===S.shopTag||p.tags.includes(S.shopTag))&&(!q||(p.name+p.desc+p.tags.join('')).toLowerCase().includes(q)));
+ if(S.shopSort==='价格低到高')l=[...l].sort((a,b)=>a.price-b.price);
+ if(S.shopSort==='价格高到低')l=[...l].sort((a,b)=>b.price-a.price);
+ return l;
+}
+function pcard(p){
+ const q=S.cart[p.id]||0;
+ return `<article class="pcard"><div class="pimg c-${p.cat}">${p.img?`<img src="${p.img}" alt="${esc(p.name)}">`:`<svg viewBox="0 0 24 24" aria-hidden="true">${PICON[p.cat]||PICON.goods}</svg>`}${p.label?`<span class="plabel l-${LCLS[p.label]||''}">${esc(p.label)}</span>`:''}</div>
+ <div class="pbody"><b class="pname">${esc(p.name)}</b><p class="pdesc">${esc(p.desc)}</p><div class="ptags">${p.tags.map(tagHtml).join('')}</div>
+ <div class="pfoot">${p.lead?`<span class="price"><small>富贵集团报价</small></span><button class="btn sm pri" data-act="lead" data-v="${p.id}">预约顾问</button>`:`<span class="price">${rm(p.price)}<small>${p.from?' 起':''}${p.sub?' / 月':''}</small></span>${q?`<span class="qty"><button data-act="dec" data-v="${p.id}" aria-label="减少">−</button><b>${q}</b><button data-act="inc" data-v="${p.id}" aria-label="增加">+</button></span>`:`<button class="btn sm pri" data-act="inc" data-v="${p.id}">加入购物车</button>`}`}</div></div></article>`;
+}
+function dShop(){
+ const list=shopList();
+ const note={
+  joss:`神料由本庙神料店统一安排。${Object.values(S.zones).map(z=>z.name.split('（')[0]+(z.fee?' '+rm(z.fee):' 免运')).join('，')}。初一、十五前一天送到。`,
+  funeral:'殡葬服务由富贵集团 Nirvana 包办。留下联络方式后，由富贵顾问直接联络你，本庙不经手费用。',
+  health:'保健品是一般食品，不是法事的一部分，也不能代替看医生。',
+  yin:'阴坛服务在阴神坛办事日进行，日期看「活动」。',
+  ritual:'到府服务下单后，庙方会安排师傅和同行会员，排好日期会通知你。',
+ }[S.cat];
+ const TAGS=['全部','热卖','新品','限量','实物','到府服务','在庙办理','订阅'];
+ return `<div class="filters"><input type="text" id="shopq" data-input="shopQ" value="${esc(S.shopQ)}" placeholder="搜商品或服务" aria-label="搜索商品"><select id="shopsort" data-act="shopsort" aria-label="排序">${['默认','价格低到高','价格高到低'].map(s=>`<option ${S.shopSort===s?'selected':''}>${s}</option>`).join('')}</select></div>
+ <div class="chips">${[['all','全部'],...CATS].map(([k,t])=>`<button data-act="cat" data-v="${k}" aria-pressed="${S.cat===k}">${t}</button>`).join('')}</div>
+ <div class="chips sub">${TAGS.map(t=>`<button data-act="shoptag" data-v="${t}" aria-pressed="${S.shopTag===t}">${t}</button>`).join('')}</div>
+ ${note?`<div class="note">${note}</div>`:''}
+ <div class="small muted">共 ${list.length} 项</div>
+ ${list.length?`<div class="pgrid">${list.map(pcard).join('')}</div>`:'<div class="card"><b>没有符合的项目</b><p class="small muted">换一个分类或标签试试。</p></div>'}`;
+}
+function dCart(){
+ const it=cartItems();if(!it.length)return `<div class="card"><h3>购物车是空的</h3><p class="muted">到商城挑选周边、法事配套或神料。</p><div class="row" style="margin-top:10px"><button class="btn pri" data-act="dtab" data-v="shop">去商城</button></div></div>`;
+ const sub=cartSub(),fee=shipFee(),z=S.zones[S.ck.zone];
+ return `<div class="row"><button class="linkbtn" data-act="dtab" data-v="shop">← 继续选购</button></div>
+ <div class="card"><h3>购物车</h3>${it.map(x=>`<div class="item"><div class="grow"><b>${esc(x.p.name)}</b><p>${rm(x.p.price)}${x.p.from?' 起':''}</p></div><span class="qty"><button data-act="dec" data-v="${x.p.id}" aria-label="减少">−</button><b>${x.q}</b><button data-act="inc" data-v="${x.p.id}" aria-label="增加">+</button></span></div>`).join('')}</div>
+ <div class="card stack"><h3 style="margin:0">取货方式</h3>
+  <div class="radio">${[['pickup','到庙自取'],['ship','送货上门']].map(([v,t])=>`<label><input type="radio" name="mode" data-act="ckmode" value="${v}" ${S.ck.mode===v?'checked':''}>${t}</label>`).join('')}</div>
+  ${S.ck.mode==='ship'?`<div class="field"><span>送货区域</span><select id="zone" data-act="ckzone">${Object.entries(S.zones).map(([k,v])=>`<option value="${k}" ${S.ck.zone===k?'selected':''}>${v.name} · ${v.fee?rm(v.fee):'免运费'}</option>`).join('')}</select></div><p class="small muted">由 ${z.via} 送达。</p>`:'<p class="small muted">办事日晚上 7 点到 11 点可以到神料柜台领取。</p>'}
+  <h3 style="margin:0">付款方式</h3>
+  <div class="radio">${['DuitNow QR','FPX','TnG eWallet','到庙付现金'].map(v=>`<label><input type="radio" name="pay" data-act="ckpay" value="${v}" ${S.ck.pay===v?'checked':''}>${v}</label>`).join('')}</div></div>
+ <div class="card"><div class="sum"><span>小计</span><span>${rm(sub)}</span><span>运费</span><span>${fee?rm(fee):'免费'}</span><span class="tot">合计</span><span class="tot">${rm(sub+fee)}</span></div>
+  <p class="small muted" style="margin-top:6px">完成后功德分和积分各 +${sub}</p></div>
+ <button class="btn pri" data-act="order">确认下单</button>`;
+}
+function dCal(){
+ const up=S.events.filter(e=>e.date>=TODAY);
+ return `<div class="sec-h"><h3>办事与神诞日程</h3></div><p class="small muted">农历日期为示范，正式上线前请用通书核对。</p><div class="card stack">${up.map(evRow).join('')}</div>
+ <div class="note">想收到宝诞和拜有应公的提醒，加入 WhatsApp 社群就会收到通知。</div>`;
+}
+function dMe(){
+ const d=dv();const next=REWARDS.find(r=>r[0]>d.credit);const pct=next?Math.min(100,Math.round(d.credit/next[0]*100)):100;
+ const myOrders=S.orders.filter(o=>o.who===d.name);
+ const myJobs=S.jobs.filter(j=>j.dev===d.name&&j.status!=='已完成');
+ return `<div class="mcard"><div class="row"><div class="grow"><div class="mname">${esc(d.name)}</div><div class="small sub">会员编号 ${d.id} · ${d.joined.slice(0,4)} 年加入</div></div><span class="mseal" aria-hidden="true">福</span></div>
+  <div class="mstats"><div><div class="small sub">功德分（累计）</div><div class="pts">${num(d.points)}</div></div><div><div class="small sub">可用积分</div><div class="pts">${num(d.credit)}</div></div></div>
+  <div><div class="bar"><i style="width:${pct}%"></i></div><div class="small sub" style="margin-top:6px">${next?'再 '+num(next[0]-d.credit)+' 积分可换「'+next[1]+'」':'所有法宝都可以兑换'}</div></div></div>
+ <div class="note">功德分只增不减。积分跟功德分一起增加，兑换法宝时只扣积分。</div>
+ ${myJobs.length?`<div class="card"><h3>我的服务</h3>${myJobs.map(j=>`<div class="item"><div class="grow"><b>${esc(j.svc)}</b><p>${jobWhen(j)} · ${esc(j.addr)}</p><p>${jobTeam(j).length?(j.master?uname(j.master)+' 主理':'')+(j.crew.length?(j.master?'，':'')+j.crew.map(uname).join('、')+' 同行':''):'庙方正在安排人手，排好会通知你'}</p></div><span class="pill ${j.status==='待派工'?'warn':'info'}">${j.status==='待派工'?'安排中':'已排期'}</span></div>`).join('')}</div>`:''}
+ <div class="card fucard"><h3>积分换法宝</h3>${REWARDS.map(r=>`<div class="item"><div class="grow"><b>${r[1]}</b><p>${num(r[0])} 积分</p></div>${d.credit>=r[0]?`<button class="btn sm fu" data-act="redeem" data-v="${r[1]}">兑换</button>`:`<span class="pill mute">还差 ${num(r[0]-d.credit)}</span>`}</div>`).join('')}
+  ${d.redeems.length?`<p class="label" style="margin-top:10px">兑换记录</p>${d.redeems.map(x=>`<p class="small muted">${dshort(x.d)} · ${esc(x.item)} · 扣 ${num(x.cost)} 积分</p>`).join('')}`:''}
+  <p class="small muted" style="margin-top:8px">问事、参加法会、做义工、请购都会累积功德分和积分。</p></div>
+ <div class="card"><h3>我的订单</h3>${myOrders.length?myOrders.map(o=>`<div class="item"><div class="grow"><b>${o.id}</b><p>${esc(o.items)}</p><p>${o.mode}${o.via&&o.via!=='—'?' · '+o.via:''}</p></div><div class="right"><div class="price">${rm(o.total)}</div><span class="pill ${o.status==='已送达'||o.status==='已完成'?'good':'warn'}">${o.status}</span></div></div>`).join(''):'<p class="muted">还没有订单。</p>'}</div>
+ <div class="card"><h3>问事记录</h3>${d.asks.map(x=>`<div class="item"><div class="grow"><b>${esc(x.deity)}</b><p>${dshort(x.d)} · ${esc(x.topic)}</p></div><span class="realm ${realmOf(x.deity)}">${realmOf(x.deity)==='t'?'天神':'阴神'}</span></div>`).join('')}</div>
+ <div class="note">家里长辈不会用手机？到庙里报名字或 IC 后四位，管理员可以帮忙注册和查资料。</div>
+ <div class="row"><button class="btn wa grow" data-act="wa">加入 WhatsApp 社群</button><button class="btn grow" data-act="contact">联络负责人</button></div>`;
+}
+
+/* ============ 后台 ============ */
+function vAdmin(){
+ let items='',pend='';NAV.forEach(n=>{if(n.grp)pend=`<div class="grp">${n.grp}</div>`;else if(can(n[2])){items+=pend+`<button data-act="atab" data-v="${n[0]}" aria-current="${S.aTab===n[0]}">${n[1]}</button>`;pend=''}});
+ const cur=NAV.find(n=>!n.grp&&n[0]===S.aTab);
+ const page=can(cur[2])?{dash:aDash,queue:aQueue,dispatch:aDispatch,tasks:aTasks,events:aEvents,products:aProducts,orders:aOrders,devotees:aDevotees,finance:aFinance,ledgers:aLedgers,attendance:aAtt,archive:aArchive,roles:aRoles,audit:aAudit}[S.aTab]():`<div class="panel lock"><h3>${me().role}没有这项权限</h3><p>「${cur[1]}」要由 IT Admin 在「职位与权限」里开放。</p></div>`;
+ return `<div class="adm"><nav class="nav" aria-label="后台功能">${items}</nav><div class="main">${page}</div></div>`;
+}
+const PH=(t,p,act='')=>`<div class="ph"><div class="grow"><h2>${t}</h2><p>${p}</p></div><div class="row">${act}</div></div>`;
+const dlBtn=(k,l='下载报告')=>can('export')?`<button class="btn" data-act="dl" data-v="${k}">${l}</button>`:'';
+function barChart(series,labels,h=190,fmt=rm){
+ const W=640,pl=44,pb=22,pt=8,pr=4,max=Math.max(...series.flatMap(s=>s.data));
+ const step=Math.pow(10,Math.floor(Math.log10(max)));const top=Math.ceil(max/step)*step;const ticks=[0,top/2,top];
+ const iw=(W-pl-pr)/labels.length,y=v=>pt+(h-pt-pb)*(1-v/top);const n=series.length,bw=Math.min(18,(iw-10-(n-1)*2)/n);
+ let g=ticks.map(t=>`<line x1="${pl}" x2="${W-pr}" y1="${y(t)}" y2="${y(t)}" stroke="var(--line)" stroke-width="1"/><text x="${pl-6}" y="${y(t)+4}" text-anchor="end">${t>=1000?t/1000+'k':t}</text>`).join('');
+ labels.forEach((l,i)=>{const x0=pl+i*iw+(iw-(n*bw+(n-1)*2))/2;
+  series.forEach((s,j)=>{const v=s.data[i],yy=y(v),hh=y(0)-yy,x=x0+j*(bw+2),r=Math.min(3,hh);
+   g+=`<path d="M${x},${y(0)}V${yy+r}q0,-${r} ${r},-${r}h${bw-2*r}q${r},0 ${r},${r}V${y(0)}z" fill="${s.color}"/>`});
+  g+=`<text x="${pl+i*iw+iw/2}" y="${h-6}" text-anchor="middle">${l}</text>`;
+  g+=`<rect class="hit" x="${pl+i*iw}" y="${pt}" width="${iw}" height="${h-pt-pb}" data-tip="${esc(l+'｜'+series.map(s=>s.name+' '+fmt(s.data[i])).join('｜'))}"/>`});
+ return `${n>1?`<div class="legend">${series.map(s=>`<span><i style="background:${s.color}"></i>${s.name}</span>`).join('')}</div>`:''}<div class="chart"><div class="chart-sc"><svg viewBox="0 0 ${W} ${h}" role="img" aria-label="${esc(series.map(s=>s.name).join('与'))}按月柱状图">${g}</svg></div></div>`;
+}
+function aDash(){
+ const c=crowd(),doneToday=S.tickets.filter(t=>t.status==='done').length;
+ const pts=S.devotees.reduce((a,d)=>a+d.points,0);
+ const up=S.events.filter(e=>e.date>=TODAY).slice(0,4);
+ return PH('总览',`今天是 ${dshort(TODAY)}。登入身份：${esc(me().name)}（${me().role}）。`)+`
+ <div class="tiles">
+  <div class="tile"><div class="k">本庙至今帮助香客</div><div class="v">${num(helpedTotal())}</div><div class="s">人次，自 2019 年起累计</div></div>
+  <div class="tile"><div class="k">今天已办理</div><div class="v">${doneToday}</div><div class="s">还有 ${c.n} 人等候 · ${c.t}</div></div>
+  <div class="tile"><div class="k">登记会员</div><div class="v">${num(1846+S.devotees.length-8)}</div><div class="s">本月新增 37 位</div></div>
+  <div class="tile"><div class="k">待处理订单</div><div class="v">${S.orders.filter(o=>o.status==='待配送'||o.status==='待自取'||o.status==='已排期').length}</div><div class="s">初一十五神料订阅 126 户</div></div>
+ </div>
+ <div class="two">
+  <div class="panel"><h3>2026 年每月服务香客人次</h3>${barChart([{name:'人次',data:HELPED,color:'var(--s1)'}],MONTHS,190,v=>num(v)+' 人次')}<p class="small muted" style="margin-top:6px">2 月安太岁、8 月中元普度是两个高峰。10 月截至今天。</p></div>
+  <div class="panel"><h3>接下来的活动</h3><div class="stack">${up.map(evRow).join('')}</div></div>
+ </div>
+ <div class="two">
+  <div class="panel"><h3>功德分与积分</h3><div class="tw"><table><thead><tr><th>香客</th><th class="num">功德分（累计）</th><th class="num">可用积分</th><th>现在可换</th></tr></thead><tbody>${[...S.devotees].sort((a,b)=>b.points-a.points).slice(0,5).map(d=>{const ok=[...REWARDS].reverse().find(r=>r[0]<=d.credit);return `<tr><td>${esc(d.name)}</td><td class="num">${num(d.points)}</td><td class="num">${num(d.credit)}</td><td>${ok?ok[1]:'<span class="muted">还不够换</span>'}</td></tr>`}).join('')}</tbody></table></div><p class="small muted" style="margin-top:8px">功德分只增不减，示范香客合计 ${num(pts)} 分；兑换只扣积分。香客看不到总消费。</p></div>
+  <div class="panel"><h3>今晚两坛</h3><div class="stack">${['A','B'].map(k=>{const q=S.queues[k],sv=serving(k);return `<div class="row"><span class="realm ${q.realm}">${q.altar}</span><b class="grow">${esc(q.deity)}</b><span>办理中 <b>${sv?sv.no:'—'}</b> · 等候 ${waiting(k).length}</span></div>`}).join('')}${can('queue')?'<div><button class="btn sm" data-act="atab" data-v="queue">去叫号</button></div>':''}</div></div>
+ </div>`;
+}
+function aQueue(){
+ const c=crowd();
+ return PH('问事叫号',`今日人潮：${c.t}，共 ${c.n} 人等候。香客手机上的人数和等候时间会跟着这里走。`)+`
+ <div class="two">${['A','B'].map(k=>{const q=S.queues[k],sv=serving(k),w=waiting(k);
+  return `<div class="panel"><div class="row"><span class="realm ${q.realm}">${q.altar}</span><h3 class="grow" style="margin:0">${esc(q.deity)}</h3><span class="pill mute">每人约 ${q.avg} 分钟</span></div>
+  <div class="row" style="margin:12px 0"><div class="grow"><div class="label">正在办理</div><div style="font-family:var(--display);font-weight:600;font-size:40px;line-height:1.1">${sv?sv.no:'—'}</div><div class="small muted">${sv?esc(sv.name)+' · '+esc(sv.topic):'没有人在办理'}</div></div>
+  <button class="btn pri" data-act="call" data-v="${k}" ${w.length||sv?'':'disabled'}>叫下一号</button></div>
+  <div class="tw"><table><thead><tr><th>号码</th><th>香客</th><th>事项</th><th>预计</th></tr></thead><tbody>${w.slice(0,6).map((t,i)=>`<tr><td><b>${t.no}</b></td><td>${esc(t.name)}${t.no===S.myTicket?' <span class="pill gold">App 拿号</span>':''}</td><td>${esc(t.topic)}</td><td>${(i+1)*q.avg} 分钟${(i+1)*q.avg<=15?' <span class="pill warn">已提醒</span>':''}</td></tr>`).join('')||'<tr><td colspan="4" class="muted">没有人等候</td></tr>'}</tbody></table></div>
+  ${w.length>6?`<p class="small muted" style="margin-top:6px">后面还有 ${w.length-6} 人</p>`:''}</div>`}).join('')}</div>
+ <div class="panel"><h3>特别预约名额</h3><div class="tw"><table><thead><tr><th>日期</th><th>时间</th><th>神明</th><th class="num">收费</th><th class="num">已约 / 名额</th><th>状态</th></tr></thead><tbody>${S.slots.map(s=>`<tr><td class="nowrap">${dshort(s.date)}</td><td>${s.time}</td><td>${esc(s.deity)}</td><td class="num">${rm(s.fee)}</td><td class="num">${s.booked} / ${s.cap}</td><td><span class="pill ${s.booked>=s.cap?'bad':'good'}">${s.booked>=s.cap?'已满':'可预约'}</span></td></tr>`).join('')}</tbody></table></div></div>`;
+}
+function jobCard(j,manage){
+ const team=jobTeam(j),st={待派工:'warn',已派工:'info',已完成:'good'}[j.status],editing=manage&&S.jobEdit===j.id;
+ const chip=(uid,m)=>`<span class="chip"><em class="${m?'m':''}">${m?'师傅':'会员'}</em>${esc(uname(uid))}${j.status==='已派工'?`<small class="${j.acks[uid]?'ok':''}">${j.acks[uid]?'已确认':'未回复'}</small>`:''}</span>`;
+ const busy=j.date?S.users.filter(u=>S.jobs.some(x=>x.id!==j.id&&x.status==='已派工'&&x.date===j.date&&jobTeam(x).includes(u.uid))).map(u=>u.name):[];
+ let foot='';
+ if(manage&&j.status!=='已完成')foot=`<div class="row"><button class="btn sm ${j.status==='待派工'&&!editing?'pri':''}" data-act="jobedit" data-v="${j.id}">${editing?'收起':j.status==='待派工'?'安排人手':'修改安排'}</button>${j.status==='已派工'?`<button class="btn sm" data-act="jobdone" data-v="${j.id}">标记完成</button>`:''}</div>`;
+ if(!manage&&j.status==='已派工')foot=`<div class="row">${j.acks[S.uid]?'<span class="pill good">你已确认出席</span>':`<button class="btn sm pri" data-act="ack" data-v="${j.id}">确认出席</button>`}</div>`;
+ return `<article class="job">
+  <div><div class="row"><b class="grow">${esc(j.svc)}</b><span class="pill ${st}">${j.status}</span></div><div class="row" style="gap:6px;margin-top:4px"><span class="small muted">${j.id}</span><span class="tag ${j.place==='到府'?'t-info':''}">${j.place==='到府'?'到府服务':'在庙办理'}</span></div></div>
+  <dl class="kv"><div><dt>香客</dt><dd>${esc(j.dev)}</dd></div><div><dt>时间</dt><dd>${jobWhen(j)}</dd></div><div><dt>地点</dt><dd>${esc(j.addr)}</dd></div>${j.note?`<div><dt>备注</dt><dd>${esc(j.note)}</dd></div>`:''}</dl>
+  <div class="team">${team.length?(j.master?chip(j.master,true):'')+j.crew.map(u=>chip(u,false)).join(''):'<span class="small muted">还没安排人</span>'}</div>
+  ${foot}
+  ${editing?`<form class="jform" data-form="job" data-v="${j.id}">
+   <label class="field"><span>日期</span><input type="date" id="jb-date" value="${j.date||'2026-10-19'}" required></label>
+   <label class="field"><span>时间</span><input type="time" id="jb-time" value="${j.time||'10:00'}" required></label>
+   <label class="field wide"><span>主理师傅</span><select id="jb-master"><option value="">未定</option>${S.users.filter(u=>u.role==='师傅').map(u=>`<option value="${u.uid}" ${j.master===u.uid?'selected':''}>${esc(u.name)}</option>`).join('')}</select></label>
+   <fieldset class="field wide"><legend>同行会员</legend><div class="radio">${committee().map(u=>`<label><input type="checkbox" name="crew" value="${u.uid}" ${j.crew.includes(u.uid)?'checked':''}>${esc(u.name)}</label>`).join('')}</div></fieldset>
+   <label class="field wide"><span>备注（要带什么、注意什么）</span><input type="text" id="jb-note" value="${esc(j.note)}"></label>
+   ${busy.length?`<p class="small muted wide">这一天已有其他任务：${busy.map(esc).join('、')}</p>`:''}
+   <div class="row wide"><button class="btn pri">保存并通知</button></div></form>`:''}
+ </article>`;
+}
+function aDispatch(){
+ const open=S.jobs.filter(j=>j.status==='待派工').length,sched=S.jobs.filter(j=>j.status==='已派工');
+ const noAck=sched.reduce((n,j)=>n+jobTeam(j).filter(u=>!j.acks[u]).length,0);
+ const ord={待派工:0,已派工:1,已完成:2};
+ const list=[...S.jobs].sort((a,b)=>ord[a.status]-ord[b.status]||(a.date||'9').localeCompare(b.date||'9'));
+ return PH('服务派工','每一单服务由哪位师傅主理、哪几位会员同行、几号几点去哪位香客的地址、做什么。保存后被安排的人马上收到通知。',dlBtn('jobs','下载派工表'))+`
+ <div class="tiles">
+  <div class="tile"><div class="k">等安排人手</div><div class="v ${open?'neg':''}">${open}</div><div class="s">香客下单后自动出现在这里</div></div>
+  <div class="tile"><div class="k">已排期</div><div class="v">${sched.length}</div><div class="s">还没做的服务</div></div>
+  <div class="tile"><div class="k">还没回复</div><div class="v">${noAck}</div><div class="s">人次未确认出席</div></div>
+ </div>
+ <div class="jobs">${list.map(j=>jobCard(j,true)).join('')}</div>
+ <p class="note">通知时间：派工当下一次，服务前一天晚上 8 点一次，出发前 2 小时一次。用 App 推送加 WhatsApp 讯息，师傅没装 App 也收得到。</p>`;
+}
+function aTasks(){
+ const up=S.jobs.filter(j=>jobTeam(j).includes(S.uid)&&j.status!=='已完成').sort((a,b)=>(a.date||'9').localeCompare(b.date||'9'));
+ const nt=S.notifs.filter(n=>n.uid===S.uid);
+ return PH('我的任务',`${esc(me().name)}被安排的服务。点「确认出席」后，派工的人会看到你已确认。`)+`
+ <div class="two"><div class="stack">${up.map(j=>jobCard(j,false)).join('')||'<div class="panel"><b>目前没有安排给你的服务</b><p class="small muted">把右上角的登入身份换成陈师傅或吴美玲，可以看到被派工的人看到的画面。</p></div>'}</div>
+ <div class="panel"><h3>通知</h3>${nt.map(n=>`<div class="item"><div class="grow"><b>${esc(n.text)}</b><p>${n.ts} · App 推送 + WhatsApp</p></div>${n.read?'':'<span class="pill info">未读</span>'}</div>`).join('')||'<p class="muted">没有通知。</p>'}</div></div>`;
+}
+function aEvents(){
+ return PH('活动发布','办事日、宝诞千秋、拜有应公、初一十五。获授权的职位都能发布，发布后香客 App 的「活动」马上更新。',`<button class="btn pri" data-act="toggle" data-v="evForm">${S.evForm?'收起':'发布新活动'}</button>`)+
+ (S.evForm?`<form class="panel form" id="evform" data-form="event"><label class="field"><span>日期</span><input type="date" id="ev-date" required value="2026-11-01"></label><label class="field"><span>农历</span><input type="text" id="ev-lunar" placeholder="例：九月廿三"></label><label class="field"><span>时间</span><input type="time" id="ev-time" value="20:00"></label><label class="field"><span>类型</span><select id="ev-type"><option>办事</option><option>宝诞</option><option>拜有应公</option><option>初一十五</option><option>法会</option></select></label><label class="field"><span>神明</span><input type="text" id="ev-deity" required placeholder="例：关圣帝君"></label><label class="field" style="grid-column:span 2"><span>标题</span><input type="text" id="ev-title" required placeholder="例：关圣帝君办事"></label><button class="btn pri">发布</button></form>`:'')+`
+ <div class="tw"><table><thead><tr><th>日期</th><th>农历</th><th>时间</th><th>活动</th><th>神明</th><th>类型</th><th>发布人</th></tr></thead><tbody>${[...S.events].sort((a,b)=>a.date.localeCompare(b.date)).map(e=>`<tr><td class="nowrap">${dshort(e.date)}</td><td>${esc(e.lunar)}</td><td>${esc(e.time)}</td><td><b>${esc(e.title)}</b></td><td>${esc(e.deity)}</td><td><span class="pill ${{办事:'mute',宝诞:'gold',拜有应公:'yin',初一十五:'good'}[e.type]||'mute'}">${esc(e.type)}</span></td><td>${esc(e.by)}</td></tr>`).join('')}</tbody></table></div>`;
+}
+function aProducts(){
+ const cn=Object.fromEntries(CATS),LB=['','热卖','新品','限量'];
+ return PH('商品与服务','改卖价、换照片、设标签、上下架、上架新项目。每一次改动都会写进操作记录。',`<button class="btn pri" data-act="toggle" data-v="prodForm">${S.prodForm?'收起':'上架新项目'}</button>`)+
+ (S.prodForm?`<form class="panel form" data-form="product"><label class="field" style="grid-column:span 2"><span>名称</span><input type="text" id="pd-name" required></label><label class="field"><span>分类</span><select id="pd-cat">${CATS.filter(c=>c[0]!=='funeral').map(([k,t])=>`<option value="${k}">${t}</option>`).join('')}</select></label><label class="field"><span>卖价（RM）</span><input type="number" id="pd-price" min="0" required></label><label class="field"><span>标签</span><select id="pd-label">${LB.map(l=>`<option value="${l}">${l||'无'}</option>`).join('')}</select></label><label class="field"><span>照片</span><input type="file" accept="image/*" id="pd-photo" data-act="pphoto" data-v="new"></label><label class="field" style="grid-column:span 2"><span>说明</span><input type="text" id="pd-desc"></label><button class="btn pri">上架</button></form>`:'')+`
+ <div class="tw"><table><thead><tr><th>照片</th><th>名称</th><th>分类</th><th>标签</th><th>属性</th><th class="num">卖价（RM）</th><th>状态</th><th></th></tr></thead><tbody>${S.products.map(p=>`<tr><td><div class="row" style="flex-wrap:nowrap;gap:6px">${p.img?`<img class="thumb" src="${p.img}" alt="">`:''}<span class="btn sm upl">${p.img?'更换':'上传'}<input type="file" accept="image/*" id="ph-${p.id}" data-act="pphoto" data-v="${p.id}" aria-label="${esc(p.name)}的照片"></span></div></td><td><b>${esc(p.name)}</b><br><span class="small muted">${p.id}</span></td><td class="nowrap">${cn[p.cat]}</td><td><select id="lb-${p.id}" data-act="plabel" data-v="${p.id}" aria-label="${esc(p.name)}的标签">${LB.map(l=>`<option value="${l}" ${p.label===l?'selected':''}>${l||'无'}</option>`).join('')}</select></td><td><div class="ptags">${p.tags.map(tagHtml).join('')}</div></td><td class="num">${p.lead?'<span class="muted">富贵报价</span>':`<input type="number" id="price-${p.id}" data-act="price" data-v="${p.id}" value="${p.price}" min="0" style="width:92px;text-align:right" aria-label="${esc(p.name)}卖价">`}</td><td><span class="pill ${p.active?'good':'mute'}">${p.active?'上架中':'已下架'}</span></td><td class="right"><button class="btn sm" data-act="pactive" data-v="${p.id}">${p.active?'下架':'重新上架'}</button></td></tr>`).join('')}</tbody></table></div>`;
+}
+function aOrders(){
+ const flow={待配送:'已送达',待自取:'已完成',已排期:'已完成'};
+ return PH('订单与送货','初一十五神料由神料店统一安排，A 区免运费，B、C 区用 Lalamove 或 Grab。',dlBtn('orders'))+`
+ <div class="tiles">${Object.entries(S.zones).map(([k,z])=>`<div class="tile"><div class="k">${z.name}</div><div class="v">${z.fee?rm(z.fee):'免运费'}</div><div class="s">${z.via}</div></div>`).join('')}</div>
+ <div class="tw"><table><thead><tr><th>订单</th><th>时间</th><th>香客</th><th>内容</th><th>取货</th><th>送货方式</th><th class="num">运费</th><th class="num">合计</th><th>付款</th><th>状态</th><th></th></tr></thead><tbody>${S.orders.map(o=>`<tr><td><b>${o.id}</b></td><td class="nowrap">${o.date}</td><td>${esc(o.who)}</td><td>${esc(o.items)}</td><td>${o.mode}${o.zone&&o.zone!=='—'?'（'+o.zone+' 区）':''}</td><td>${o.via}</td><td class="num">${o.fee?rm(o.fee):'—'}</td><td class="num">${rm(o.total)}</td><td>${esc(o.pay)}</td><td><span class="pill ${o.status==='已送达'||o.status==='已完成'?'good':'warn'}">${o.status}</span></td><td>${flow[o.status]?`<button class="btn sm" data-act="ostatus" data-v="${o.id}">标记${flow[o.status]}</button>`:''}</td></tr>`).join('')}</tbody></table></div>
+ <div class="panel"><h3>殡葬转介名单（富贵集团 Nirvana）</h3><div class="tw"><table><thead><tr><th>日期</th><th>香客</th><th>电话</th><th>有兴趣的项目</th><th>进度</th></tr></thead><tbody>${S.leads.map(l=>`<tr><td>${l.date}</td><td>${esc(l.who)}</td><td>${l.phone}</td><td>${esc(l.item)}</td><td><span class="pill ${l.status==='待转介'?'warn':'good'}">${l.status}</span></td></tr>`).join('')}</tbody></table></div><p class="small muted" style="margin-top:8px">成交后的转介酬劳记在财务表的「香油乐捐」或另开分页，看你们和富贵怎么约定。</p></div>`;
+}
+function devRows(){const q=S.devQ.trim();return S.devotees.filter(d=>!q||d.name.includes(q)||d.ic4.includes(q)||d.id.toLowerCase().includes(q.toLowerCase())||d.phone.replace(/\D/g,'').includes(q))}
+function aDevotees(){
+ const rows=devRows();
+ return PH('香客资料','香客到庙里只要报名字或 IC 后四位就能找到。总消费只有后台看得到。',(can('register')?`<button class="btn pri" data-act="toggle" data-v="regForm">${S.regForm?'收起':'代香客注册'}</button>`:'')+dlBtn('devotees'))+
+ (S.regForm&&can('register')?`<form class="panel form" data-form="register"><label class="field"><span>姓名</span><input type="text" id="rg-name" required></label><label class="field"><span>IC 后四位</span><input type="text" id="rg-ic" required pattern="[0-9]{4}" maxlength="4" inputmode="numeric" placeholder="4 位数字"></label><label class="field"><span>电话</span><input type="text" id="rg-phone" placeholder="01X-XXX XXXX"></label><label class="field"><span>Email（可不填）</span><input type="text" id="rg-email"></label><label class="field" style="grid-column:span 2"><span>地址</span><input type="text" id="rg-addr"></label><button class="btn pri">完成注册</button></form>`:'')+`
+ <div class="row"><input type="text" id="devq" data-input="devQ" value="${esc(S.devQ)}" placeholder="输入姓名、IC 后四位或会员编号" style="flex:1;min-width:200px" aria-label="搜索香客"><span class="muted small">找到 ${rows.length} 位</span></div>
+ <div class="tw"><table><thead><tr><th>编号</th><th>姓名</th><th>IC</th><th>电话</th><th>Email</th><th>地址</th><th class="num">功德分</th><th class="num">可用积分</th><th class="num">总消费</th><th class="num">问事</th><th>问过的神明</th><th class="num">特别预约</th><th>买过的服务与商品</th></tr></thead><tbody>${rows.map(d=>`<tr><td>${d.id}</td><td><b>${esc(d.name)}</b></td><td class="nowrap">${d.ic}</td><td class="nowrap">${d.phone}</td><td>${esc(d.email)||'<span class="muted">—</span>'}</td><td>${esc(d.addr)}</td><td class="num">${num(d.points)}</td><td class="num">${num(d.credit)}</td><td class="num">${rm(d.spend)}</td><td class="num">${d.asks.length}</td><td>${[...new Set(d.asks.map(a=>a.deity))].join('、')||'<span class="muted">—</span>'}</td><td class="num">${d.special}</td><td>${d.buys.map(esc).join('、')||'<span class="muted">—</span>'}</td></tr>`).join('')||'<tr><td colspan="13" class="muted">找不到这位香客。可以用「代香客注册」帮他开户。</td></tr>'}</tbody></table></div>
+ <p class="small muted">IC 只显示头尾，完整号码不进报告。</p>`;
+}
+function fin(){
+ const inc=[...INC],exp=[...EXP];inc[9]+=S.sessionIncome;
+ const ti=inc.reduce((a,b)=>a+b,0),te=exp.reduce((a,b)=>a+b,0);
+ const net=inc.map((v,i)=>v-exp[i]);
+ const lossM=net.filter(v=>v<0),profM=net.filter(v=>v>0);
+ return{inc,exp,ti,te,net,profit:ti-te,lossSum:-lossM.reduce((a,b)=>a+b,0),lossN:lossM.length,profSum:profM.reduce((a,b)=>a+b,0),profN:profM.length};
+}
+function split(total,cats){let left=total;return cats.map(([n,s],i)=>{const v=i===cats.length-1?left:Math.round(total*s/10)*10;left-=v;return[n,v]})}
+function aFinance(){
+ const f=fin(),res=Math.max(0,Math.round(f.profit*S.reserve/100));
+ const ic=split(f.ti,INC_CAT),ec=split(f.te,EXP_CAT);
+ const catT=(rows,tot)=>`<div class="tw"><table><tbody>${rows.map(([n,v])=>`<tr><td>${n}</td><td class="num">${rm(v)}</td><td class="num muted">${Math.round(v/tot*100)}%</td></tr>`).join('')}</tbody><tfoot><tr><td>合计</td><td class="num">${rm(tot)}</td><td class="num">100%</td></tr></tfoot></table></div>`;
+ return PH('财政报告','2026 年 1 月至今。只有获授权的职位看得到，每次打开和下载都会留记录。',dlBtn('finance','下载财政报告'))+`
+ <div class="tiles">
+  <div class="tile"><div class="k">进账</div><div class="v">${rm(f.ti)}</div><div class="s">10 个月合计</div></div>
+  <div class="tile"><div class="k">支出</div><div class="v">${rm(f.te)}</div><div class="s">占进账 ${Math.round(f.te/f.ti*100)}%</div></div>
+  <div class="tile"><div class="k">盈利</div><div class="v pos">${rm(f.profit)}</div><div class="s">${f.profN} 个月赚钱，共 ${rm(f.profSum)}</div></div>
+  <div class="tile"><div class="k">亏损</div><div class="v ${f.lossN?'neg':''}">${rm(f.lossSum)}</div><div class="s">${f.lossN} 个月亏损${f.lossN?'（'+f.net.map((v,i)=>v<0?MONTHS[i]:'').filter(Boolean).join('、')+'）':''}</div></div>
+  <div class="tile"><div class="k">留作运营费</div><div class="v">${rm(res)}</div><div class="s">盈利的 ${S.reserve}%</div></div>
+ </div>
+ <div class="panel"><div class="row"><label for="reserve" class="grow"><b>盈利留下多少做运营费</b><br><span class="small muted">其余 ${rm(f.profit-res)} 可以拨去建庙基金、慈善或神诞开销。</span></label><input type="range" id="reserve" data-input="reserve" min="0" max="100" step="5" value="${S.reserve}" style="width:min(240px,100%);accent-color:var(--accent-bg)"><b id="reserve-out" style="width:48px;text-align:right">${S.reserve}%</b></div></div>
+ <div class="panel"><h3>每月进账与支出</h3>${barChart([{name:'进账',data:f.inc,color:'var(--s1)'},{name:'支出',data:f.exp,color:'var(--s2)'}],MONTHS,220)}</div>
+ <div class="tw"><table><thead><tr><th>月份</th><th class="num">进账</th><th class="num">支出</th><th class="num">盈亏</th><th class="num">留作运营费（${S.reserve}%）</th><th>状态</th></tr></thead><tbody>${MONTHS.map((m,i)=>`<tr><td>2026 年 ${m}</td><td class="num">${rm(f.inc[i])}</td><td class="num">${rm(f.exp[i])}</td><td class="num">${f.net[i]<0?'−'+rm(-f.net[i]):rm(f.net[i])}</td><td class="num">${f.net[i]>0?rm(Math.round(f.net[i]*S.reserve/100)):'—'}</td><td><span class="pill ${f.net[i]<0?'bad':'good'}">${f.net[i]<0?'亏损':'盈利'}</span></td></tr>`).join('')}</tbody><tfoot><tr><td>合计</td><td class="num">${rm(f.ti)}</td><td class="num">${rm(f.te)}</td><td class="num">${rm(f.profit)}</td><td class="num">${rm(res)}</td><td></td></tr></tfoot></table></div>
+ <div class="two"><div class="panel"><h3>进账来源</h3>${catT(ic,f.ti)}</div><div class="panel"><h3>支出去向</h3>${catT(ec,f.te)}</div></div>`;
+}
+function dueRows(){
+ const r=[];
+ S.L.offer.rows.forEach(x=>x[4]==='未付'&&r.push(['报效法宝',x[0],x[1],x[3],'—','未付']));
+ S.L.auction.rows.forEach(x=>x[6]>0&&r.push(['宴会标品',x[2],x[1],x[6],x[7]||'—',x[8]]));
+ S.L.sponsor.rows.forEach(x=>x[4]==='未付'&&r.push(['法会赞助',x[1],x[0]+' · '+x[2],x[3],'—','未付']));
+ return r;
+}
+function stPill(v){const m={已付:'good',已付清:'good',未付:'bad',逾期:'bad',分期中:'warn',未到期:'good'};const k=Object.keys(m).find(k=>String(v)===k);return k?`<span class="pill ${m[k]}">${v}</span>`:String(v).startsWith('已过期')?`<span class="pill bad">${v}</span>`:null}
+function aLedgers(){
+ const names={...Object.fromEntries(Object.entries(S.L).map(([k,v])=>[k,v.name])),due:'应收追踪'};
+ const tabs=`<div class="tabs" role="tablist">${LEDGER_ORDER.map(k=>`<button role="tab" data-act="ledger" data-v="${k}" aria-selected="${S.ledger===k}">${names[k]}</button>`).join('')}</div>`;
+ let body;
+ if(S.ledger==='due'){const r=dueRows(),tot=r.reduce((a,x)=>a+x[3],0);
+  body=`<p class="note">自动从报效法宝、宴会标品、法会赞助三张表抓出还没收齐的款项，方便财政每周追收。</p><div class="tw"><table><thead><tr><th>来源</th><th>姓名</th><th>项目</th><th class="num">未收金额</th><th>到期日</th><th>状态</th></tr></thead><tbody>${r.map(x=>`<tr><td>${x[0]}</td><td><b>${esc(x[1])}</b></td><td>${esc(x[2])}</td><td class="num">${rm(x[3])}</td><td>${x[4]}</td><td>${stPill(x[5])||x[5]}</td></tr>`).join('')||'<tr><td colspan="6" class="muted">全部收齐了。</td></tr>'}</tbody><tfoot><tr><td colspan="3">未收合计</td><td class="num">${rm(tot)}</td><td colspan="2"></td></tr></tfoot></table></div>`;
+ }else{
+  const L=S.L[S.ledger];const payable={offer:4,sponsor:4,auction:8}[S.ledger];
+  const tot=L.rows.reduce((a,r)=>a+r[L.money],0);
+  body=`<div class="tw"><table><thead><tr>${L.cols.map((c,i)=>`<th class="${typeof L.rows[0][i]==='number'?'num':''}">${c}</th>`).join('')}${payable!=null?'<th></th>':''}</tr></thead><tbody>${L.rows.map((r,ri)=>`<tr>${r.map((c,i)=>`<td class="${typeof c==='number'?'num':''}">${typeof c==='number'?rm(c):(stPill(c)||esc(c)||'<span class="muted">—</span>')}</td>`).join('')}${payable!=null?`<td class="right">${(S.ledger==='auction'?r[6]>0:r[payable]==='未付')?`<button class="btn sm" data-act="collect" data-v="${ri}">${S.ledger==='auction'&&r[4]!=='一次性'?'收一期':'登记收款'}</button>`:''}</td>`:''}</tr>`).join('')}</tbody><tfoot><tr><td colspan="${L.money}">合计</td><td class="num">${rm(tot)}</td><td colspan="${L.cols.length-L.money-1+(payable!=null?1:0)}"></td></tr></tfoot></table></div>`;
+ }
+ return PH('财务表','每一类钱一个分页，谁给、给多少、几号几点给、谁经手都分开记。',dlBtn('ledger','下载这一页'))+tabs+body+
+ `<p class="small muted">还可以再开的分页：会员年费、神料店进销存、转介酬劳（富贵）、建庙与发展基金、慈善拨款。</p>`;
+}
+function aAtt(){
+ const m=S.meetings.find(x=>x.id===S.meeting),a=S.att[m.id],C=committee();
+ const cnt=v=>C.filter(u=>a[u.uid]===v).length;
+ const rate=u=>{const n=S.meetings.length;return Math.round(S.meetings.filter(x=>S.att[x.id][u.uid]==='P').length/n*100)};
+ return PH('开会打卡','文书记录谁出席、谁缺席、谁请假。记录可以下载做会议报告。',`<button class="btn" data-act="newmeeting">新增会议</button>`+dlBtn('attendance','下载出席报告'))+`
+ <div class="row"><label for="meeting" class="small muted">会议</label><select id="meeting" data-act="meeting">${S.meetings.map(x=>`<option value="${x.id}" ${x.id===m.id?'selected':''}>${x.date} · ${esc(x.title)}</option>`).join('')}</select>
+  <span class="pill good">出席 ${cnt('P')}</span><span class="pill bad">缺席 ${cnt('A')}</span><span class="pill warn">请假 ${cnt('L')}</span></div>
+ <div class="tw"><table><thead><tr><th>姓名</th><th>职位</th><th>这次会议</th><th class="num">今年出席率</th></tr></thead><tbody>${C.map(u=>`<tr><td><b>${esc(u.name)}</b></td><td>${u.role}</td><td><span class="tri">${[['P','出席'],['A','缺席'],['L','请假']].map(([v,t])=>`<button data-act="att" data-v="${u.uid}:${v}" data-s="${v}" aria-pressed="${a[u.uid]===v}">${t}</button>`).join('')}</span></td><td class="num">${rate(u)}%</td></tr>`).join('')}</tbody></table></div>`;
+}
+function aArchive(){
+ const years=['全部',...[...new Set(S.docs.map(d=>d.year))].sort((a,b)=>b-a)];
+ const types=['全部','会议记录','发出信件','收到信件','通告','官方文件','合约'];
+ const q=S.arcQ.trim();
+ const rows=S.docs.filter(d=>(S.arcYear==='全部'||String(d.year)===String(S.arcYear))&&(S.arcType==='全部'||d.type===S.arcType)&&(!q||d.title.includes(q)||d.ref.toLowerCase().includes(q.toLowerCase())));
+ return PH('文书档案','历年的会议记录、来往信件、通告、官方文件都放这里。原件扫描成 PDF 存档。',`<button class="btn pri" data-act="toggle" data-v="arcForm">${S.arcForm?'收起':'存入新文件'}</button>`)+
+ (S.arcForm?`<form class="panel form" data-form="doc"><label class="field" style="grid-column:span 2"><span>标题</span><input type="text" id="dc-title" required></label><label class="field"><span>类型</span><select id="dc-type">${types.slice(1).map(t=>`<option>${t}</option>`).join('')}</select></label><label class="field"><span>日期</span><input type="date" id="dc-date" value="${TODAY}" required></label><label class="field"><span>编号</span><input type="text" id="dc-ref" placeholder="例：OUT-2026-015"></label><button class="btn pri">存档</button></form>`:'')+`
+ <div class="row"><select id="arcyear" data-act="arcyear" aria-label="年份">${years.map(y=>`<option ${String(S.arcYear)===String(y)?'selected':''}>${y}</option>`).join('')}</select><select id="arctype" data-act="arctype" aria-label="类型">${types.map(t=>`<option ${S.arcType===t?'selected':''}>${t}</option>`).join('')}</select><input type="text" id="arcq" data-input="arcQ" value="${esc(S.arcQ)}" placeholder="搜标题或编号" style="flex:1;min-width:160px" aria-label="搜索文件"><span class="small muted">${rows.length} 份</span></div>
+ <div class="tw"><table><thead><tr><th>日期</th><th>类型</th><th>标题</th><th>编号</th><th>存档人</th><th></th></tr></thead><tbody>${rows.map(d=>`<tr><td class="nowrap">${d.date}</td><td><span class="pill mute">${d.type}</span></td><td><b>${esc(d.title)}</b></td><td>${esc(d.ref)}</td><td>${esc(d.by)}</td><td class="right"><button class="btn sm" data-act="opendoc" data-v="${esc(d.ref)}">打开</button></td></tr>`).join('')||'<tr><td colspan="6" class="muted">没有符合的文件。</td></tr>'}</tbody></table></div>`;
+}
+function aRoles(){
+ const edit=can('roles');
+ return PH('职位与权限','IT Admin 在这里决定每个职位能用什么功能。改完马上生效，可以用右上角换身份试试看。')+`
+ <div class="panel"><h3>理事会成员</h3><div class="tw"><table><thead><tr><th>用户编号</th><th>姓名</th><th>职位</th><th></th></tr></thead><tbody>${S.users.map(u=>`<tr><td>${u.uid}</td><td>${S.renaming===u.uid?`<form class="row" data-form="rename" data-v="${u.uid}"><input type="text" id="rn-name" value="${esc(u.name)}" required style="width:130px"><button class="btn sm pri">保存</button></form>`:`<b>${esc(u.name)}</b>`}</td><td>${edit?`<select id="role-${u.uid}" data-act="setrole" data-v="${u.uid}" aria-label="${esc(u.name)}的职位">${ROLES.map(r=>`<option ${u.role===r?'selected':''}>${r}</option>`).join('')}</select>`:u.role}</td><td class="right">${edit&&S.renaming!==u.uid?`<button class="btn sm" data-act="rename" data-v="${u.uid}">改名</button>`:''}</td></tr>`).join('')}</tbody></table></div></div>
+ <div class="panel"><h3>功能权限表</h3><div class="tw"><table class="matrix"><thead><tr><th>功能</th>${ROLES.map(r=>`<th>${r}</th>`).join('')}</tr></thead><tbody>${PERMS.map(([k,t])=>`<tr><td>${t}</td>${ROLES.map(r=>`<td><input type="checkbox" id="pm-${k}-${ROLES.indexOf(r)}" data-act="perm" data-v="${r}|${k}" ${S.perms[r][k]?'checked':''} ${!edit||(r==='IT Admin'&&k==='roles')?'disabled':''} aria-label="${r}：${t}"></td>`).join('')}</tr>`).join('')}</tbody></table></div>
+ <p class="small muted" style="margin-top:8px">例：文书开了「开会打卡」和「下载报告」，就能记录出席并下载报告；财政开了「商品上架与改价」和「财政报告」，就能改卖价、上架新项目、下载财务报表。</p></div>`;
+}
+function aAudit(){
+ const cur=Object.fromEntries(S.users.map(u=>[u.uid,u.name]));
+ const cls={下载:'warn',修改:'bad',查看:'mute',新增:'good',叫号:'mute',收款:'good',派工:'info'};
+ return PH('操作记录','谁改动、谁下载、谁打开敏感资料，全部自动记下，不能删改。记录的是用户编号，所以就算后来改名也对得上。',dlBtn('audit','下载记录'))+`
+ <div class="tw"><table><thead><tr><th>时间</th><th>用户编号</th><th>当时的姓名</th><th>动作</th><th>对象</th><th>详情</th></tr></thead><tbody>${S.audit.map(a=>`<tr><td class="nowrap">${a.ts}</td><td>${a.uid}</td><td><b>${esc(a.nameAt)}</b>${cur[a.uid]&&cur[a.uid]!==a.nameAt?`<br><span class="small muted">现名：${esc(cur[a.uid])}</span>`:''}</td><td><span class="pill ${cls[a.action]||'mute'}">${a.action}</span></td><td>${esc(a.target)}</td><td>${esc(a.detail)}</td></tr>`).join('')}</tbody></table></div>`;
+}
+
+/* ============ 报告内容 ============ */
+function report(k){
+ if(k==='devotees')return['香客资料_'+TODAY+'.csv',[['会员编号','姓名','IC','电话','Email','地址','功德分','可用积分','总消费(RM)','问事次数','问过的神明','特别预约次数','买过的服务与商品'],...devRows().map(d=>[d.id,d.name,d.ic,d.phone,d.email,d.addr,d.points,d.credit,d.spend,d.asks.length,[...new Set(d.asks.map(a=>a.deity))].join('、'),d.special,d.buys.join('、')])],'香客资料报告'];
+ if(k==='finance'){const f=fin();return['财政报告_2026.csv',[['月份','进账(RM)','支出(RM)','盈亏(RM)','留作运营费(RM)'],...MONTHS.map((m,i)=>['2026年'+m,f.inc[i],f.exp[i],f.net[i],f.net[i]>0?Math.round(f.net[i]*S.reserve/100):0]),['合计',f.ti,f.te,f.profit,Math.max(0,Math.round(f.profit*S.reserve/100))]],'财政报告'];}
+ if(k==='ledger'){if(S.ledger==='due')return['应收追踪_'+TODAY+'.csv',[['来源','姓名','项目','未收金额(RM)','到期日','状态'],...dueRows()],'财务表 · 应收追踪'];const L=S.L[S.ledger];return[L.name+'_'+TODAY+'.csv',[L.cols,...L.rows],'财务表 · '+L.name];}
+ if(k==='attendance'){const m=S.meetings.find(x=>x.id===S.meeting);const t={P:'出席',A:'缺席',L:'请假'};return['出席报告_'+m.date+'.csv',[['会议',m.title],['日期',m.date],['姓名','职位','出席情况'],...committee().map(u=>[u.name,u.role,t[S.att[m.id][u.uid]]||'未记录'])],'开会出席报告'];}
+ if(k==='orders')return['订单_'+TODAY+'.csv',[['订单','时间','香客','内容','取货','送货方式','运费(RM)','合计(RM)','付款','状态'],...S.orders.map(o=>[o.id,o.date,o.who,o.items,o.mode,o.via,o.fee,o.total,o.pay,o.status])],'订单报告'];
+ if(k==='jobs')return['服务派工_'+TODAY+'.csv',[['编号','服务','香客','地点','日期','时间','主理师傅','同行会员','状态','备注'],...S.jobs.map(j=>[j.id,j.svc,j.dev,j.addr,j.date||'待定',j.time,j.master?uname(j.master):'',j.crew.map(uname).join('、'),j.status,j.note])],'服务派工表'];
+ if(k==='audit')return['操作记录_'+TODAY+'.csv',[['时间','用户编号','当时的姓名','动作','对象','详情'],...S.audit.map(a=>[a.ts,a.uid,a.nameAt,a.action,a.target,a.detail])],'操作记录'];
+}
+
+/* ============ 渲染与事件 ============ */
+function render(){
+ const app=document.getElementById('app'),unread=S.notifs.filter(n=>n.uid===S.uid&&!n.read).length;
+ const ae=document.activeElement,fid=ae&&ae.id,sel=fid&&ae.selectionStart!=null&&ae.type==='text'?[ae.selectionStart,ae.selectionEnd]:null;
+ const pb=document.getElementById('phbody'),st=pb?pb.scrollTop:0,keep=render.last===S.view+S.dTab;
+  app.innerHTML=`<header class="top"><div class="top-in">
+  <div class="brand"><div class="brand-seal">庙</div><b>神庙 App 原型</b><span class="demo-chip">示范资料</span></div>
+  <div class="seg" role="group" aria-label="切换画面"><button data-act="view" data-v="devotee" aria-pressed="${S.view==='devotee'}">香客端</button><button data-act="view" data-v="admin" aria-pressed="${S.view==='admin'}">管理后台</button></div>
+  <div class="seg" role="group" aria-label="白天或黑夜"><button data-act="theme" data-v="light" aria-pressed="${S.theme==='light'}">白天</button><button data-act="theme" data-v="dark" aria-pressed="${S.theme==='dark'}">黑夜</button></div>
+  ${S.view==='admin'&&can('tasks')?`<button class="btn sm" data-act="atab" data-v="tasks">通知${unread?`<span class="badge">${unread}</span>`:''}</button>`:''}
+  ${S.view==='admin'?`<label class="who">登入身份<select id="who" data-act="who">${S.users.map(u=>`<option value="${u.uid}" ${u.uid===S.uid?'selected':''}>${esc(u.name)} · ${u.role}</option>`).join('')}</select></label>`:''}
+ </div></header><main class="wrap">${S.view==='devotee'?vDevotee():vAdmin()}</main><footer class="foot">示范版：你做的改动只存在这台装置的浏览器里。<button class="linkbtn" data-act="reset">恢复示范资料</button></footer>`;
+ const npb=document.getElementById('phbody');if(npb&&keep)npb.scrollTop=st;render.last=S.view+S.dTab;
+ if(fid){const el=document.getElementById(fid);if(el){el.focus({preventScroll:true});if(sel)try{el.setSelectionRange(sel[0],sel[1])}catch(e){}}}
+ save();
+}
+const KEY='temple-app-demo-v3';
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+function load(){try{const r=localStorage.getItem(KEY);if(r)Object.assign(S,JSON.parse(r))}catch(e){}}
+function applyTheme(){document.documentElement.setAttribute('data-theme',S.theme==='dark'?'dark':'light')}
+function goAdmin(tab){S.view='admin';S.aTab=tab;const perm=NAV.find(n=>!n.grp&&n[0]===tab)[2];if(can(perm)&&['finance','devotees','audit'].includes(tab))log('查看',NAV.find(n=>!n.grp&&n[0]===tab)[1],'打开页面');window.scrollTo(0,0)}
+const ACT={
+ view(v){S.view=v;window.scrollTo(0,0)},
+ who(v){S.uid=v},
+ dtab(v){S.view='devotee';S.dTab=v;if(v==='ask')S.askTab=S.askTab||'walk'},
+ atab(v){goAdmin(v)},
+ asktab(v){S.view='devotee';S.dTab='ask';S.askTab=v},
+ cat(v){S.view='devotee';S.dTab='shop';S.cat=v},
+ topic(v){S.topic=v},
+ remind(v,el){S.remindOn=el.checked;toast(S.remindOn?'轮到前 15 分钟会提醒你':'已关闭提醒')},
+ take(k){const q=S.queues[k];q.last++;const no=k+String(q.last).padStart(3,'0');S.tickets.push({no,q:k,name:dv().name,topic:S.topic,status:'waiting'});S.myTicket=no;S.reminded=false;const a=myAhead();toast(`已拿号 ${no}，前面还有 ${a.ahead} 位`)},
+ cancelticket(){const t=S.tickets.find(x=>x.no===S.myTicket);if(t)t.status='cancelled';S.myTicket=null;toast('号码已取消')},
+ clearticket(){S.myTicket=null},
+ simcall(){let a=myAhead();if(!a)return;
+  if(a.status==='serving'){callNext(a.t.q,true);finishMine();return}
+  for(let i=0;i<3;i++){a=myAhead();if(a.status!=='waiting')break;const far=a.eta>15;callNext(a.t.q,true);if(far&&myAhead().eta<=15)break}},
+ call(k){const mineBefore=myAhead();const wasServing=mineBefore&&mineBefore.status==='serving'&&mineBefore.t.q===k;callNext(k);if(wasServing)finishMine()},
+ book(id){const s=S.slots.find(x=>x.id===id);if(s.booked>=s.cap)return;s.booked++;S.myAppts.push(id);const d=dv();d.special++;toast(`已预约 ${dshort(s.date)} ${s.time} ${s.deity}`)},
+ inc(id){S.cart[id]=(S.cart[id]||0)+1},
+ dec(id){S.cart[id]=Math.max(0,(S.cart[id]||0)-1);if(!S.cart[id])delete S.cart[id]},
+ lead(id){const p=S.products.find(x=>x.id===id),d=dv();S.leads.unshift({date:TODAY,who:d.name,phone:d.phone,item:p.name,status:'待转介'});toast('已收到，富贵集团顾问会在 1 个工作日内联络你')},
+ ckmode(v){S.ck.mode=v},ckzone(v){S.ck.zone=v},ckpay(v){S.ck.pay=v},
+ order(){const it=cartItems();if(!it.length)return;const sub=cartSub(),fee=shipFee(),d=dv(),z=S.zones[S.ck.zone];const id='OD-'+(1043+S.orders.length-5);
+  S.orders.unshift({id,date:nowStr().slice(0,16),who:d.name,items:it.map(x=>x.p.name+' ×'+x.q).join('，'),total:sub+fee,mode:S.ck.mode==='ship'?'送货':'到庙自取',zone:S.ck.mode==='ship'?S.ck.zone:'—',via:S.ck.mode==='ship'?z.via:'—',fee,pay:S.ck.pay,status:S.ck.mode==='ship'?'待配送':'待自取'});
+  it.forEach(x=>{const p=x.p;if(p.from||p.cat==='ritual'||p.cat==='yin')S.jobs.unshift({id:'J-'+String(30+S.jobs.length).padStart(4,'0'),svc:p.name,dev:d.name,addr:p.from?d.addr:'本庙',place:p.from?'到府':'庙里',date:'',time:'',master:null,crew:[],status:'待派工',note:'App 下单 '+id,acks:{}})});
+  d.points+=sub;d.credit+=sub;d.spend+=sub+fee;S.sessionIncome+=sub+fee;it.forEach(x=>d.buys.push(x.p.name+(x.q>1?' ×'+x.q:'')));S.cart={};S.dTab='me';toast(`下单成功 ${id}，功德分和积分各 +${sub}`)},
+ redeem(v){const d=dv(),r=REWARDS.find(x=>x[1]===v);if(!r||d.credit<r[0]){toast('积分不够');return}d.credit-=r[0];d.redeems.unshift({d:TODAY,item:v,cost:r[0]});toast(`已用 ${num(r[0])} 积分兑换「${v}」，功德分不变`)},
+ theme(v){S.theme=v;applyTheme()},
+ reset(){const t=S.theme;for(const k of Object.keys(S))delete S[k];Object.assign(S,JSON.parse(INIT));S.theme=t;try{localStorage.removeItem(KEY)}catch(e){}toast('已恢复示范资料')},
+ wa(){openSheet('WhatsApp 社群','正式版点这个按钮会直接打开本庙的 WhatsApp Community 邀请链接。把链接给我，就能换上去。')},
+ contact(){openSheet('联络负责人',`<div class="tw"><table><tbody>${S.users.filter(u=>['主席','总务','文书'].includes(u.role)).map(u=>`<tr><td><b>${esc(u.name)}</b></td><td>${u.role}</td><td>${{主席:'庙务与合作',总务:'问事、法事、送货',文书:'会员注册与活动'}[u.role]}</td><td class="nowrap">WhatsApp 01X-XXX XXXX</td></tr>`).join('')}</tbody></table></div><p class="small muted">正式版每一行点下去直接开 WhatsApp 对话。</p>`)},
+ toggle(k){S[k]=!S[k]},
+ price(id,el){const p=S.products.find(x=>x.id===id),nv=Math.max(0,Math.round(Number(el.value)||0));if(nv===p.price)return;log('修改','商品 · '+p.name,`卖价 ${rm(p.price)} → ${rm(nv)}`);p.price=nv;toast(`${p.name} 卖价已改为 ${rm(nv)}`)},
+ pactive(id){const p=S.products.find(x=>x.id===id);p.active=!p.active;log('修改','商品 · '+p.name,p.active?'重新上架':'下架')},
+ ostatus(id){const o=S.orders.find(x=>x.id===id);const to={待配送:'已送达',待自取:'已完成',已排期:'已完成'}[o.status];log('修改','订单 '+id,`${o.status} → ${to}`);o.status=to},
+ ledger(v){S.ledger=v},
+ collect(i){const L=S.L[S.ledger],r=L.rows[+i],t=nowStr().slice(0,16);
+  if(S.ledger==='auction'){const n=r[4]==='一次性'?1:Number(r[4].replace(/\D/g,''))||1;const pay=Math.min(r[6],Math.round(r[3]/n));r[5]+=pay;r[6]-=pay;r[8]=r[6]>0?'分期中':'已付清';if(r[6]<=0)r[7]='';log('收款','宴会标品 · '+r[1],`${r[2]} 付 ${rm(pay)}，余额 ${rm(r[6])}`);toast(`已登记 ${r[2]} 付款 ${rm(pay)}`)}
+  else if(S.ledger==='offer'){r[4]='已付';r[5]=t;r[6]='现金';r[7]=me().name;log('收款','报效法宝 · '+r[1],`${r[0]} 付 ${rm(r[3])}`);toast(`已登记 ${r[0]} 付款`)}
+  else{r[4]='已付';r[5]=t;r[6]=me().name;log('收款','法会赞助 · '+r[0],`${r[1]} 付 ${rm(r[3])}`);toast(`已登记 ${r[1]} 付款`)}},
+ meeting(v){S.meeting=v},
+ att(v){const[uid,val]=v.split(':');const u=S.users.find(x=>x.uid===uid),m=S.meetings.find(x=>x.id===S.meeting);if(S.att[m.id][uid]===val)return;S.att[m.id][uid]=val;log('修改','开会打卡 · '+m.date,`${u.name}：${{P:'出席',A:'缺席',L:'请假'}[val]}`)},
+ newmeeting(){const id='M'+(S.meetings.length+1);S.meetings.push({id,date:TODAY,title:'临时会议（'+TODAY+'）'});S.att[id]=Object.fromEntries(committee().map(u=>[u.uid,'P']));S.meeting=id;log('新增','开会打卡','临时会议（'+TODAY+'）');toast('已新增今天的会议，预设全员出席，再逐个调整')},
+ arcyear(v){S.arcYear=v},arctype(v){S.arcType=v},
+ opendoc(ref){log('查看','文书档案',ref);openSheet(ref,'正式版这里直接打开扫描好的 PDF 原件。打开和下载都会写进操作记录。')},
+ rename(uid){S.renaming=uid},
+ setrole(uid,el){const u=S.users.find(x=>x.uid===uid);log('修改','职位 · '+u.name,`${u.role} → ${el.value}`);u.role=el.value},
+ perm(v,el){const[r,k]=v.split('|');S.perms[r][k]=el.checked;log('修改','权限 · '+r,`${el.checked?'开启':'关闭'}「${PERMS.find(p=>p[0]===k)[1]}」`)},
+ shoptag(v){S.shopTag=v},shopsort(v){S.shopSort=v},
+ plabel(id,el){const p=S.products.find(x=>x.id===id);log('修改','商品 · '+p.name,`标签 ${p.label||'无'} → ${el.value||'无'}`);p.label=el.value},
+ jobedit(v){S.jobEdit=S.jobEdit===v?null:v},
+ jobdone(id){const j=S.jobs.find(x=>x.id===id);j.status='已完成';log('修改','服务 '+id,`${j.svc} 标记已完成`);toast(`${j.svc} 已完成`)},
+ ack(id){const j=S.jobs.find(x=>x.id===id);j.acks[S.uid]=true;S.notifs.forEach(n=>{if(n.uid===S.uid&&n.job===id)n.read=true});toast('已确认出席')},
+ dl(k){const[f,rows,label]=report(k);download(f,rows,label)},
+ copycsv(){const b=document.getElementById('csvbox');const done=()=>toast('已复制，可以贴进 Excel');try{navigator.clipboard.writeText(b.value).then(done).catch(()=>{b.select()})}catch(e){b.select()}},
+ closemodal(){document.getElementById('modal').hidden=true},
+};
+function finishMine(){const d=dv();toast('办理完成，功德分和积分各 +10');d.points+=10;d.credit+=10;d.asks.unshift({d:TODAY,deity:S.queues[S.myTicket[0]].deity,topic:S.topic});}
+function openSheet(title,html){const m=document.getElementById('modal');m.innerHTML=`<div role="dialog" aria-label="${esc(title)}"><h3>${esc(title)}</h3><div>${html}</div><div class="row"><button class="btn pri" data-act="closemodal">知道了</button></div></div>`;m.hidden=false}
+
+document.addEventListener('click',e=>{
+ if(e.target.id==='modal'){e.target.hidden=true;return}
+ const el=e.target.closest('[data-act]');if(!el||/^(SELECT|INPUT)$/.test(el.tagName))return;
+ const a=el.dataset.act;if(!ACT[a])return;ACT[a](el.dataset.v,el);
+ if(!['dl','copycsv','closemodal','wa','contact','opendoc'].includes(a))render();else if(a==='opendoc')render();
+});
+document.addEventListener('change',e=>{
+ const el=e.target;if(el.dataset&&el.dataset.input&&el.type==='range'){render();return}
+ if(!el.dataset||!el.dataset.act||!/^(SELECT|INPUT)$/.test(el.tagName))return;
+ if(el.type==='file'){const f=el.files&&el.files[0];if(!f)return;const r=new FileReader();
+  r.onload=()=>{if(el.dataset.v==='new'){S.newPhoto=r.result;toast('照片已选好，按「上架」后生效');return}
+   const p=S.products.find(x=>x.id===el.dataset.v);p.img=r.result;log('修改','商品 · '+p.name,'更换照片');toast(p.name+' 的照片已更新');render()};
+  r.readAsDataURL(f);return}
+ const a=el.dataset.act;const v=el.type==='checkbox'||a==='price'||a==='setrole'||a==='plabel'?el.dataset.v:(el.value);
+ if(a==='who'){S.uid=el.value;const perm=NAV.find(n=>!n.grp&&n[0]===S.aTab)[2];if(!can(perm))S.aTab='dash'}
+ else ACT[a](v,el);
+ render();
+});
+document.addEventListener('input',e=>{const el=e.target,k=el.dataset&&el.dataset.input;if(!k)return;
+ if(el.type==='range'){S[k]=Number(el.value);const o=document.getElementById(k+'-out');if(o)o.textContent=S[k]+'%';return}
+ if(e.isComposing)return;S[k]=el.value;render()});
+document.addEventListener('compositionend',e=>{const el=e.target,k=el.dataset&&el.dataset.input;if(!k)return;S[k]=el.value;render()});
+document.addEventListener('submit',e=>{
+ e.preventDefault();const f=e.target.dataset.form,$=id=>document.getElementById(id).value.trim();
+ if(f==='event'){const ev={date:$('ev-date'),lunar:$('ev-lunar')||'待补',time:$('ev-time'),title:$('ev-title'),deity:$('ev-deity'),type:$('ev-type'),by:me().name};S.events.push(ev);S.evForm=false;log('新增','活动发布',`${ev.date} ${ev.title}`);toast('已发布，香客 App 的活动页已更新')}
+ if(f==='product'){const p=pp($('pd-cat'),$('pd-name'),Math.max(0,Math.round(Number($('pd-price'))||0)),$('pd-desc'));p.label=$('pd-label');p.img=S.newPhoto;S.newPhoto=null;S.products.push(p);S.prodForm=false;log('新增','商品 · '+p.name,`上架，卖价 ${rm(p.price)}`);toast('已上架 '+p.name)}
+ if(f==='register'){const ic=$('rg-ic');const id='D'+String(S.devotees.length+1).padStart(4,'0');const d={id,name:$('rg-name'),ic:'••••••••'+ic,ic4:ic,phone:$('rg-phone')||'未填',email:$('rg-email'),addr:$('rg-addr')||'未填',points:0,credit:0,redeems:[],spend:0,special:0,joined:TODAY,asks:[],buys:[]};S.devotees.push(d);S.regForm=false;S.devQ=d.name;log('新增','香客资料',`代注册 ${d.name}（${id}）`);toast(`已帮 ${d.name} 注册，会员编号 ${id}`)}
+ if(f==='doc'){const date=$('dc-date');const d={year:Number(date.slice(0,4)),date,type:$('dc-type'),title:$('dc-title'),ref:$('dc-ref')||'未编号',by:me().name};S.docs.unshift(d);S.docs.sort((a,b)=>b.date.localeCompare(a.date));S.arcForm=false;log('新增','文书档案',`${d.type}：${d.title}`);toast('已存档')}
+ if(f==='job'){const j=S.jobs.find(x=>x.id===e.target.dataset.v),crew=[...e.target.querySelectorAll('input[name=crew]:checked')].map(i=>i.value),master=$('jb-master');
+  if(!master&&!crew.length){toast('至少选一位师傅或会员');return}
+  j.date=$('jb-date');j.time=$('jb-time');j.master=master||null;j.crew=crew;j.note=$('jb-note');j.status='已派工';j.acks={};
+  const ids=jobTeam(j);S.notifs=S.notifs.filter(n=>n.job!==j.id);notify(j,ids,'新任务');S.jobEdit=null;
+  log('派工','服务 '+j.id,`${j.svc} · ${jobWhen(j)} · ${ids.map(uname).join('、')}`);toast(`已通知 ${ids.map(uname).join('、')}（App 推送 + WhatsApp）`)}
+ if(f==='rename'){const u=S.users.find(x=>x.uid===e.target.dataset.v),nv=$('rn-name');if(nv&&nv!==u.name){const old=u.name;log('修改','个人资料 · '+u.uid,`姓名 ${old} → ${nv}`);u.name=nv;toast(`已改名。之前的操作记录仍显示「${old}」`)}S.renaming=null}
+ render();
+});
+/* 图表提示 */
+let tipEl;
+document.addEventListener('mousemove',e=>{
+ const r=e.target.closest&&e.target.closest('.hit');
+ if(!r){if(tipEl){tipEl.remove();tipEl=null}return}
+ const box=r.closest('.chart');if(!tipEl||tipEl.parentNode!==box){if(tipEl)tipEl.remove();tipEl=document.createElement('div');tipEl.className='tip';box.appendChild(tipEl)}
+ tipEl.innerHTML=r.dataset.tip.split('｜').map(esc).join('<br>');
+ const b=box.getBoundingClientRect();tipEl.style.left=Math.min(b.width-70,Math.max(70,e.clientX-b.left))+'px';tipEl.style.top=(e.clientY-b.top-10)+'px';
+});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')document.getElementById('modal').hidden=true});
+const INIT=JSON.stringify(S);load();applyTheme();render();
+</script>
+</body>
+</html>
